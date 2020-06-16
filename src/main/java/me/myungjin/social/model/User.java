@@ -62,7 +62,8 @@ public class User {
     public LocalDateTime getCreateAt() {
         return createAt;
     }
-
+    // equals 와 hashcode
+    // https://jojoldu.tistory.com/134
     @Override
     public int hashCode() {
         return Objects.hash(seq);
