@@ -24,10 +24,9 @@ dependencies {
 	compile ('com.h2database:h2')
 	compile ('org.springframework.boot:spring-boot-starter-jdbc')
 	compile ('org.apache.commons:commons-lang3:3.10')
+	compile (group: 'com.google.guava', name: 'guava', version: '23.5-jre')
 
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
 test {
