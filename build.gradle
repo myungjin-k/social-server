@@ -17,14 +17,15 @@ repositories {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web") {
-		exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+	compile('org.springframework.boot:spring-boot-starter-web') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
 	}
-	compile ("org.springframework.boot:spring-boot-starter-undertow")
+	compile ('org.springframework.boot:spring-boot-starter-undertow')
 	compile ('com.h2database:h2')
 	compile ('org.springframework.boot:spring-boot-starter-jdbc')
 	compile ('org.apache.commons:commons-lang3:3.10')
 	compile (group: 'com.google.guava', name: 'guava', version: '23.5-jre')
+	compile (group: 'org.lazyluke', name: 'log4jdbc-remix', version: '0.2.7')
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }

@@ -28,8 +28,6 @@ public class UserRestControllerTest {
 
     private MockMvc mvc;
 
-
-
     @Autowired
     private WebApplicationContext context;
 
