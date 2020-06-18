@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
@@ -28,7 +29,15 @@ public class User {
 
     private final LocalDateTime createAt;
 
-    public User(Long seq, String email, String name, String password, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt) {
+    public User(String name, String email, String password) {
+        this(null, name, email, password, 0, null, null);
+    }
+
+    public User(Long seq, String name, String email, String password, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt) {
+        checkNotNull(name, "name must be provided.");
+        checkArgument(name.length() >=1 && name.length() <= 10,
+                "name length must be between 1 and 10 characters."
+        );
         checkNotNull(email, "email must be provided.");
         checkNotNull(password, "password must be provided.");
         this.seq = seq;
@@ -156,7 +165,7 @@ public class User {
         }
 
         public User build() {
-            return new User(seq, email, name, password, loginCount, lastLoginAt, createAt);
+            return new User(seq, name, email, password, loginCount, lastLoginAt, createAt);
         }
     }
 }
