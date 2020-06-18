@@ -1,6 +1,7 @@
 package me.myungjin.social.controller;
 
 import me.myungjin.social.model.User;
+import me.myungjin.social.model.api.response.ApiResult;
 import me.myungjin.social.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,7 @@ public class UserRestController {
     }
 
     @GetMapping(path = "users")
-    public List<User> findAllUsers() {
-        return userService.findAllUsers();
+    public ApiResult<List<User>> findAllUsers() {
+        return ApiResult.OK(userService.findAllUsers());
     }
 }
