@@ -1,5 +1,6 @@
 package me.myungjin.social.service;
 
+import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.model.User;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.repository.UserRepository;
@@ -26,14 +27,22 @@ public class UserService {
 
     @Transactional
     public User join(String name, String email, String password) {
-        User user = new User(name, email, password);
-        return save(user);
+        if(findByEmail(email).isPresent()){
+            throw new DuplicateKeyException(User.class, email);
+        }
+        return save(new User(name, email, password));
     }
 
     @Transactional(readOnly = true)
     public Optional<User> findById(Id<User, Long> userId) {
         checkNotNull(userId.value(), "userId must be provided.");
         return userRepository.findById(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findByEmail(String email) {
+        checkNotNull(email, "email must be provided.");
+        return userRepository.findByEmail(email);
     }
 
     private User save(User user) {
