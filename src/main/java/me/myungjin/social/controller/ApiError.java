@@ -1,4 +1,4 @@
-package me.myungjin.social.model.api.response;
+package me.myungjin.social.controller;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
