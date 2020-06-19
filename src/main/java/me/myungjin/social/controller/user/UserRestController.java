@@ -1,16 +1,17 @@
-package me.myungjin.social.controller;
+package me.myungjin.social.controller.user;
 
+import me.myungjin.social.controller.ApiResult;
+import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.User;
 import me.myungjin.social.model.api.request.JoinRequest;
-import me.myungjin.social.model.api.response.ApiResult;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static me.myungjin.social.model.api.response.ApiResult.OK;
+import static me.myungjin.social.controller.ApiResult.OK;
 
 @RestController
 @RequestMapping("api")
@@ -29,9 +30,10 @@ public class UserRestController {
 
     @PostMapping(path = "user/join")
     public ApiResult<User> join(@RequestBody JoinRequest joinRequest) {
-        return OK(
-                userService.join(joinRequest.getName(), joinRequest.getPrincipal(), joinRequest.getCredentials())
-        );
+        User user = userService.join(joinRequest.getName(), joinRequest.getPrincipal(), joinRequest.getCredentials());
+        if(user.getSeq() == -2)
+            throw new DuplicateKeyException(User.class, user.getEmail());
+        return OK(user);
     }
 
     @GetMapping(path = "user/me")
