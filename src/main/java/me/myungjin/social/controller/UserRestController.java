@@ -1,5 +1,6 @@
 package me.myungjin.social.controller;
 
+import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.User;
 import me.myungjin.social.model.api.request.JoinRequest;
 import me.myungjin.social.model.api.response.ApiResult;
@@ -35,7 +36,7 @@ public class UserRestController {
     @GetMapping(path = "user/me")
     public ApiResult<User> me(Long userId) {
         return OK(
-                userService.findById(userId).orElse(new User.Builder().build())
+                userService.findById(userId).orElseThrow(() -> new NotFoundException(User.class, userId))
         );
     }
 }
