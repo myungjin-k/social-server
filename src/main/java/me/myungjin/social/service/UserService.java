@@ -1,6 +1,7 @@
 package me.myungjin.social.service;
 
 import me.myungjin.social.model.User;
+import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +31,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> findById(Long userId) {
-        checkNotNull(userId, "userId must be provided.");
+    public Optional<User> findById(Id<User, Long> userId) {
+        checkNotNull(userId.value(), "userId must be provided.");
         return userRepository.findById(userId);
     }
 

@@ -1,6 +1,7 @@
 package me.myungjin.social.repository;
 
 import me.myungjin.social.model.User;
+import me.myungjin.social.model.commons.Id;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -28,8 +29,8 @@ public class JdbcUserRepository implements UserRepository{
     }
 
     @Override
-    public Optional<User> findById(Long seq) {
-        List<User> results = jdbcTemplate.query("SELECT * FROM USERS WHERE SEQ = ?", new Object[]{seq}, mapper);
+    public Optional<User> findById(Id<User, Long> userId) {
+        List<User> results = jdbcTemplate.query("SELECT * FROM USERS WHERE SEQ = ?", new Object[]{userId.value()}, mapper);
         return Optional.ofNullable(results.isEmpty() ? null : results.get(0));
     }
 
