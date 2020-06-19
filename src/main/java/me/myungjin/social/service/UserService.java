@@ -27,10 +27,8 @@ public class UserService {
 
     @Transactional
     public User join(String name, String email, String password) {
-        if(findByEmail(email).isPresent()){
-            throw new DuplicateKeyException(User.class, email);
-        }
-        return save(new User(name, email, password));
+        User user = new User(name, email, password);
+        return findByEmail(email).map(u -> new User.Builder(user).seq(-2L).build()).orElseGet(() -> save(user));
     }
 
     @Transactional(readOnly = true)

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.myungjin.social.model.api.request.JoinRequest;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -40,6 +43,7 @@ public class UserRestControllerTest {
     }
 
     @Test
+    @Order(1)
     public void 모든_사용자를_조회한다() throws Exception {
         //given
         String url = "http://localhost:" + port + "/api/users/";
@@ -52,6 +56,7 @@ public class UserRestControllerTest {
     }
 
     @Test
+    @Order(2)
     public void 신규_사용자를_저장한다() throws Exception {
         //given
         String name = "mjkim";
@@ -66,5 +71,23 @@ public class UserRestControllerTest {
                 .content(new ObjectMapper().writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(3)
+    public void 같은_이메일로_신규_사용자를_저장할_수_없다() throws Exception {
+        //given
+        String name = "mjkim";
+        String principal = "abc002@gmail.com";
+        String credentials = "user001";
+        JoinRequest request = new JoinRequest(name, principal, credentials);
+        String url = "http://localhost:" + port + "/api/user/join";
+
+        //when
+        mvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().is5xxServerError());
     }
 }
