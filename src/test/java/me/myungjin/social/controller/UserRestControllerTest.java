@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.myungjin.social.model.api.request.JoinRequest;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserRestControllerTest {
     @LocalServerPort
     private int port;
@@ -88,6 +93,6 @@ public class UserRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
                 .andDo(print())
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isBadRequest());
     }
 }
