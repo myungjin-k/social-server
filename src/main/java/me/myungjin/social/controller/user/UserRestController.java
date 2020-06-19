@@ -29,7 +29,7 @@ public class UserRestController {
     }
 
     @PostMapping(path = "user/join")
-    public ApiResult<User> join(@RequestBody JoinRequest joinRequest) throws Exception {
+    public ApiResult<User> join(@RequestBody JoinRequest joinRequest) {
         User user = userService.join(joinRequest.getName(), joinRequest.getPrincipal(), joinRequest.getCredentials());
         if(user.getSeq() == -2)
             throw new DuplicateKeyException(User.class, user.getEmail());
