@@ -1,5 +1,6 @@
-package me.myungjin.social.model;
+package me.myungjin.social.model.user;
 
+import me.myungjin.social.security.Jwt;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -49,6 +50,16 @@ public class User {
         this.createAt = defaultIfNull(createAt, now());
     }
 
+/*    public void login(PasswordEncoder passwordEncoder, String credentials){
+        if(!passwordEncoder.matches(credentials, password))
+            throw new IllegalArgumentException("Bad credential");
+    }
+    */
+
+    public void afterLoginSuccess() {
+        loginCount++;
+        lastLoginAt = now();
+    }
     public Long getSeq() {
         return seq;
     }
@@ -105,6 +116,11 @@ public class User {
                 .append("lastLoginAt", lastLoginAt)
                 .append("createAt", createAt)
                 .toString();
+    }
+
+    public String newApiToken(Jwt jwt, String[] roles) {
+        Jwt.Claims claims = Jwt.Claims.of(seq, name, email, roles);
+        return jwt.newToken(claims);
     }
 
     public static class Builder {

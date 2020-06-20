@@ -1,6 +1,6 @@
 package me.myungjin.social.service.user;
 
-import me.myungjin.social.model.User;
+import me.myungjin.social.model.user.User;
 import me.myungjin.social.service.UserService;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;

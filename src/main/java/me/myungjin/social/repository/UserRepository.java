@@ -1,6 +1,6 @@
 package me.myungjin.social.repository;
 
-import me.myungjin.social.model.User;
+import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.commons.Id;
 
 import java.util.List;
@@ -19,4 +19,6 @@ public interface UserRepository {
     User save(User user);
 
     void update(User user);
+
+    List<Id<User, Long>> findConnectedIds(Id<User, Long> userId);
 }

@@ -1,6 +1,6 @@
 package me.myungjin.social.repository;
 
-import me.myungjin.social.model.User;
+import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.commons.Id;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -78,6 +78,15 @@ public class JdbcUserRepository implements UserRepository{
             user.getLoginCount(),
             user.getLastLoginAt().orElse(null),
             user.getSeq()
+        );
+    }
+
+    @Override
+    public List<Id<User, Long>> findConnectedIds(Id<User, Long> userId) {
+        return jdbcTemplate.query(
+                "SELECT target_seq FROM connections WHERE user_seq=? AND granted_at is not null ORDER BY target_seq",
+                new Object[]{userId.value()},
+                (rs, rowNum) -> Id.of(User.class, rs.getLong("target_seq"))
         );
     }
 

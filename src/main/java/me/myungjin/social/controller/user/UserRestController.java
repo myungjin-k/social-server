@@ -3,7 +3,7 @@ package me.myungjin.social.controller.user;
 import me.myungjin.social.controller.ApiResult;
 import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
-import me.myungjin.social.model.User;
+import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.api.request.JoinRequest;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.service.UserService;
