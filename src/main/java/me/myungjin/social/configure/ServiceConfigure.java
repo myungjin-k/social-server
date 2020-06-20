@@ -1,7 +1,6 @@
 package me.myungjin.social.configure;
 
 import com.zaxxer.hikari.HikariDataSource;
-import me.myungjin.social.security.Jwt;
 import me.myungjin.social.util.MessageUtils;
 import net.sf.log4jdbc.Log4jdbcProxyDataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -30,11 +29,6 @@ public class ServiceConfigure {
     dataSource.setMinimumIdle(1);
     dataSource.setMaximumPoolSize(1);
     return new Log4jdbcProxyDataSource(dataSource);
-  }
-
-  @Bean
-  public Jwt jwt(JwtTokenConfigure jwtTokenConfigure) {
-    return new Jwt(jwtTokenConfigure.getIssuer(), jwtTokenConfigure.getClientSecret(), jwtTokenConfigure.getExpirySeconds());
   }
 
   @Bean

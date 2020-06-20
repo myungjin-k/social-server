@@ -1,6 +1,4 @@
 package me.myungjin.social.model.user;
-
-import me.myungjin.social.security.Jwt;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -116,11 +114,6 @@ public class User {
                 .append("lastLoginAt", lastLoginAt)
                 .append("createAt", createAt)
                 .toString();
-    }
-
-    public String newApiToken(Jwt jwt, String[] roles) {
-        Jwt.Claims claims = Jwt.Claims.of(seq, name, email, roles);
-        return jwt.newToken(claims);
     }
 
     public static class Builder {
