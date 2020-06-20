@@ -75,6 +75,7 @@ public class JdbcUserRepository implements UserRepository{
     public void update(User user) {
         jdbcTemplate.update("UPDATE users SET passwd=?, name=?, login_count=?,last_login_at=? WHERE seq=?",
             user.getPassword(),
+            user.getName(),
             user.getLoginCount(),
             user.getLastLoginAt().orElse(null),
             user.getSeq()

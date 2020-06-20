@@ -1,6 +1,8 @@
 package me.myungjin.social.model.user;
+import me.myungjin.social.security.Jwt;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -48,16 +50,21 @@ public class User {
         this.createAt = defaultIfNull(createAt, now());
     }
 
-/*    public void login(PasswordEncoder passwordEncoder, String credentials){
+    public void login(PasswordEncoder passwordEncoder, String credentials){
         if(!passwordEncoder.matches(credentials, password))
             throw new IllegalArgumentException("Bad credential");
     }
-    */
 
     public void afterLoginSuccess() {
         loginCount++;
         lastLoginAt = now();
     }
+
+    public String newApiToken(Jwt jwt, String[] roles) {
+        Jwt.Claims claims = Jwt.Claims.of(seq, name, email, roles);
+        return jwt.newToken(claims);
+    }
+
     public Long getSeq() {
         return seq;
     }
