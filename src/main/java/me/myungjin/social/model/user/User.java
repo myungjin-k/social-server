@@ -30,11 +30,13 @@ public class User {
 
     private final LocalDateTime createAt;
 
+    private final Role role;
+
     public User(String name, String email, String password) {
-        this(null, name, email, password, 0, null, null);
+        this(null, name, email, password, 0, null, null, null);
     }
 
-    public User(Long seq, String name, String email, String password, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt) {
+    public User(Long seq, String name, String email, String password, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt, Role role) {
         checkNotNull(name, "name must be provided.");
         checkArgument(name.length() >=1 && name.length() <= 10,
                 "name length must be between 1 and 10 characters."
@@ -48,6 +50,7 @@ public class User {
         this.loginCount = loginCount;
         this.lastLoginAt = lastLoginAt;
         this.createAt = defaultIfNull(createAt, now());
+        this.role = role;
     }
 
     public void login(PasswordEncoder passwordEncoder, String credentials){
@@ -92,6 +95,11 @@ public class User {
     public LocalDateTime getCreateAt() {
         return createAt;
     }
+
+    public Role getRole() {
+        return role;
+    }
+
     // equals 와 hashcode
     // https://jojoldu.tistory.com/134
     @Override
@@ -107,6 +115,7 @@ public class User {
         if(!Objects.equals(seq, that.seq)) return false;
         if(!Objects.equals(email, that.email)) return false;
         if(!Objects.equals(name, that.name)) return false;
+        if(!Objects.equals(role, that.role)) return false;
         return Objects.equals(createAt, that.createAt);
     }
 
@@ -120,6 +129,7 @@ public class User {
                 .append("loginCount", loginCount)
                 .append("lastLoginAt", lastLoginAt)
                 .append("createAt", createAt)
+                .append("role", role)
                 .toString();
     }
 
@@ -131,6 +141,7 @@ public class User {
         private int loginCount;
         private LocalDateTime lastLoginAt;
         private LocalDateTime createAt;
+        private Role role;
 
         public Builder() {
         }
@@ -143,6 +154,7 @@ public class User {
             this.loginCount = user.loginCount;
             this.lastLoginAt = user.lastLoginAt;
             this.createAt = user.createAt;
+            this.role = user.role;
         }
 
         public Builder seq(Long seq){
@@ -180,8 +192,12 @@ public class User {
             return this;
         }
 
+        public Builder role(Role role){
+            this.role = role;
+            return this;
+        }
         public User build() {
-            return new User(seq, name, email, password, loginCount, lastLoginAt, createAt);
+            return new User(seq, name, email, password, loginCount, lastLoginAt, createAt, role);
         }
     }
 }

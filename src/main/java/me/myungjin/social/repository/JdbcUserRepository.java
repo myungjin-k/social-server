@@ -1,5 +1,6 @@
 package me.myungjin.social.repository;
 
+import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.commons.Id;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -99,5 +100,6 @@ public class JdbcUserRepository implements UserRepository{
             .loginCount(rs.getInt("login_count"))
             .lastLoginAt(dateTimeOf(rs.getTimestamp("last_login_at")))
             .createAt(dateTimeOf(rs.getTimestamp("create_at")))
+            .role(Role.of(rs.getString("role")))
             .build();
 }

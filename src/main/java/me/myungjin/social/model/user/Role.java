@@ -2,7 +2,8 @@ package me.myungjin.social.model.user;
 
 public enum Role {
 
-    USER("ROLE_USER");
+    USER("ROLE_USER"),
+    ADMIN("ROLE_ADMIN");
 
     private final String value;
 
@@ -15,7 +16,7 @@ public enum Role {
     }
 
     // TODO 없어도 되는 메소드인지?
-    /*public static Role of(String name) {
+    public static Role of(String name) {
         for (Role role : Role.values()) {
             if (role.name().equalsIgnoreCase(name)) {
                 return role;
@@ -23,5 +24,5 @@ public enum Role {
         }
         return null;
     }
-    */
+
 }

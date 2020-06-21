@@ -36,8 +36,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     try {
       User user = userService.login(request.getPrincipal(), request.getCredentials());
       JwtAuthenticationToken authenticated =
-        new JwtAuthenticationToken(user.getSeq(), null, createAuthorityList(Role.USER.value()));
-      String apiToken = user.newApiToken(jwt, new String[]{Role.USER.value()});
+        new JwtAuthenticationToken(user.getSeq(), null, createAuthorityList(user.getRole().value()));
+      String apiToken = user.newApiToken(jwt, new String[]{user.getRole().value()});
       authenticated.setDetails(new AuthenticationResult(apiToken, user));
       return authenticated;
     } catch (NotFoundException e) {

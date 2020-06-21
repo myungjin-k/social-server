@@ -110,21 +110,26 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
+      // CSRF(Cross Site Request Forgery : 사이트 간 요청 위조) protection 해제
+      // 개발 옵션
       .csrf()
         .disable()
+      // 개발 옵션
       .headers()
         .disable()
       .exceptionHandling()
         .accessDeniedHandler(accessDeniedHandler)
         .authenticationEntryPoint(unauthorizedHandler)
         .and()
+       // No session will be created or used by spring security
       .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
       .authorizeRequests()
         .antMatchers("/api/auth").permitAll()
         .antMatchers("/api/user/join").permitAll()
-        .antMatchers("/api/**").hasRole(Role.USER.name())
+        .antMatchers("/api/users").hasRole(Role.ADMIN.name())
+        .antMatchers("/api/**").authenticated()
         .accessDecisionManager(accessDecisionManager())
         .anyRequest().permitAll()
         .and()
