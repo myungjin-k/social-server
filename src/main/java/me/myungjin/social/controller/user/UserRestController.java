@@ -7,6 +7,7 @@ import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.api.request.JoinRequest;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.security.JwtAuthentication;
+import me.myungjin.social.security.UserPrincipal;
 import me.myungjin.social.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +40,9 @@ public class UserRestController {
     }
 
     @GetMapping(path = "user/me")
-    public ApiResult<User> me(@AuthenticationPrincipal JwtAuthentication authentication) {
+    public ApiResult<User> me(@AuthenticationPrincipal UserPrincipal authentication) {
         return OK(
-                userService.findById(authentication.id).orElseThrow(() -> new NotFoundException(User.class, authentication.id))
+                userService.findById(Id.of(User.class, authentication.getUser().getSeq())).orElseThrow(() -> new NotFoundException(User.class, authentication.getUser().getSeq()))
         );
     }
 }

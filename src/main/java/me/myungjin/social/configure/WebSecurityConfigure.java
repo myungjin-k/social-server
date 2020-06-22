@@ -18,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +29,7 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
   private final JwtTokenConfigure jwtTokenConfigure;
 
   private final UserPrincipalDetailsService userService;
+
 
   public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, UserPrincipalDetailsService userService) {
     this.jwt = jwt;
@@ -60,6 +62,13 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
+  public JwtAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
+    JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwt, jwtTokenConfigure.getHeader(), authenticationManagerBean());
+    filter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/**"));
+    return filter;
+  }
+
+  @Bean
   PasswordEncoder passwordEncoder(){
     return new BCryptPasswordEncoder();
   }
@@ -76,10 +85,10 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
             // configure access rules
             .antMatchers("/api/auth").permitAll()
             .antMatchers("/api/user/join").permitAll()
-            .antMatchers("/api/users").hasRole(Role.ADMIN.name())
+            //.antMatchers("/api/users").hasRole(Role.ADMIN.name())
             .antMatchers("/api/**").authenticated()
             .anyRequest().authenticated();
     http
-            .addFilterBefore(new JwtAuthenticationFilter(jwt, jwtTokenConfigure.getHeader(), authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 }
