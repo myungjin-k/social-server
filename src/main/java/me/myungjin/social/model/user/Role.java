@@ -15,7 +15,6 @@ public enum Role {
         return value;
     }
 
-    // TODO 없어도 되는 메소드인지?
     public static Role of(String name) {
         for (Role role : Role.values()) {
             if (role.name().equalsIgnoreCase(name)) {

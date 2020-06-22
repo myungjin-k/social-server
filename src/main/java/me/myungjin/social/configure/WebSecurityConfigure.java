@@ -1,17 +1,14 @@
 package me.myungjin.social.configure;
 
-import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.Role;
-import me.myungjin.social.model.user.User;
-import me.myungjin.social.security.*;
-import me.myungjin.social.service.UserService;
+import me.myungjin.social.security.Jwt;
+import me.myungjin.social.security.JwtAuthenticationFilter;
+import me.myungjin.social.security.UserPrincipalDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.AccessDecisionManager;
-import org.springframework.security.access.AccessDecisionVoter;
-import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -20,17 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.apache.commons.lang3.math.NumberUtils.toLong;
 
 @Configuration
 @EnableWebSecurity
@@ -40,20 +27,12 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
 
   private final JwtTokenConfigure jwtTokenConfigure;
 
-  private final JwtAccessDeniedHandler accessDeniedHandler;
+  private final UserPrincipalDetailsService userService;
 
-  private final EntryPointUnauthorizedHandler unauthorizedHandler;
-
-  public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, JwtAccessDeniedHandler accessDeniedHandler, EntryPointUnauthorizedHandler unauthorizedHandler) {
+  public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, UserPrincipalDetailsService userService) {
     this.jwt = jwt;
     this.jwtTokenConfigure = jwtTokenConfigure;
-    this.accessDeniedHandler = accessDeniedHandler;
-    this.unauthorizedHandler = unauthorizedHandler;
-  }
-
-  @Bean
-  public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() {
-    return new JwtAuthenticationTokenFilter(jwtTokenConfigure.getHeader(), jwt);
+    this.userService = userService;
   }
 
   @Override
@@ -62,13 +41,16 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
   }
 
   @Autowired
-  public void configureAuthentication(AuthenticationManagerBuilder builder, JwtAuthenticationProvider authenticationProvider) {
-    builder.authenticationProvider(authenticationProvider);
+  public void configureAuthentication(AuthenticationManagerBuilder builder) {
+    builder.authenticationProvider(authenticationProvider());
   }
 
   @Bean
-  public JwtAuthenticationProvider jwtAuthenticationProvider(Jwt jwt, UserService userService) {
-    return new JwtAuthenticationProvider(jwt, userService);
+  DaoAuthenticationProvider authenticationProvider(){
+    DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+    daoAuthenticationProvider.setUserDetailsService(userService);
+    return daoAuthenticationProvider;
   }
 
   @Bean
@@ -78,65 +60,26 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public PasswordEncoder passwordEncoder() {
+  PasswordEncoder passwordEncoder(){
     return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  public ConnectionBasedVoter connectionBasedVoter() {
-    final String regex = "^/api/user/(\\d+)/post/.*$";
-    Pattern pattern = Pattern.compile(regex);
-    RequestMatcher requiresAuthorizationRequestMatcher = new RegexRequestMatcher(pattern.pattern(), null);
-    return new ConnectionBasedVoter(
-      requiresAuthorizationRequestMatcher,
-      (String url) -> {
-        /* url에서 targetId를 추출하기 위해 정규식 처리 */
-        Matcher matcher = pattern.matcher(url);
-        long id = matcher.find() ? toLong(matcher.group(1), -1) : -1;
-        return Id.of(User.class, id);
-      }
-    );
-  }
-
-  @Bean
-  public AccessDecisionManager accessDecisionManager() {
-    List<AccessDecisionVoter<?>> decisionVoters = new ArrayList<>();
-    decisionVoters.add(new WebExpressionVoter());
-    decisionVoters.add(connectionBasedVoter());
-    // 모든 voter가 승인해야 해야한다.
-    return new UnanimousBased(decisionVoters);
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-      // CSRF(Cross Site Request Forgery : 사이트 간 요청 위조) protection 해제
-      // 개발 옵션
-      .csrf()
-        .disable()
-      // 개발 옵션
-      .headers()
-        .disable()
-      .exceptionHandling()
-        .accessDeniedHandler(accessDeniedHandler)
-        .authenticationEntryPoint(unauthorizedHandler)
-        .and()
-       // No session will be created or used by spring security
-      .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-      .authorizeRequests()
-        .antMatchers("/api/auth").permitAll()
-        .antMatchers("/api/user/join").permitAll()
-        .antMatchers("/api/users").hasRole(Role.ADMIN.name())
-        .antMatchers("/api/**").authenticated()
-        .accessDecisionManager(accessDecisionManager())
-        .anyRequest().permitAll()
-        .and()
-      .formLogin()
-        .disable();
+            // remove csrf and state in session because in jwt we do not need them
+            .csrf().disable()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+           //.addFilter(new JwtAuthenticationFilter(authenticationManager(),  this.userRepository))
+            .authorizeRequests()
+            // configure access rules
+            .antMatchers("/api/auth").permitAll()
+            .antMatchers("/api/user/join").permitAll()
+            .antMatchers("/api/users").hasRole(Role.ADMIN.name())
+            .antMatchers("/api/**").authenticated()
+            .anyRequest().authenticated();
     http
-      .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthenticationFilter(jwt, jwtTokenConfigure.getHeader(), authenticationManager()), UsernamePasswordAuthenticationFilter.class);
   }
-
 }

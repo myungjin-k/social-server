@@ -6,6 +6,7 @@ import me.myungjin.social.security.AuthenticationRequest;
 import me.myungjin.social.security.AuthenticationResult;
 import me.myungjin.social.security.JwtAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,11 +31,9 @@ public class AuthenticationRestController {
   @PostMapping
   public ApiResult<AuthenticationResult> authentication(@RequestBody AuthenticationRequest authRequest) throws UnauthorizedException {
     try {
-      JwtAuthenticationToken authToken = new JwtAuthenticationToken(authRequest.getPrincipal(), authRequest.getCredentials());
-      Authentication authentication = authenticationManager.authenticate(authToken);
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+      UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(authRequest.getPrincipal(), authRequest.getCredentials());
       return OK(
-        (AuthenticationResult) authentication.getDetails()
+        (AuthenticationResult) authToken.getDetails()
       );
     } catch (AuthenticationException e) {
       throw new UnauthorizedException(e.getMessage());
