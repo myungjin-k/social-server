@@ -1,8 +1,12 @@
 package me.myungjin.social.configure;
 
+import me.myungjin.social.model.user.Role;
+import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.Jwt;
 import me.myungjin.social.security.JwtAuthenticationFilter;
+import me.myungjin.social.security.JwtAuthenticationProvider;
 import me.myungjin.social.security.UserPrincipalDetailsService;
+import me.myungjin.social.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,13 +30,13 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
 
   private final JwtTokenConfigure jwtTokenConfigure;
 
-  private final UserPrincipalDetailsService userService;
+  private final UserPrincipalDetailsService userDetailService;
 
 
-  public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, UserPrincipalDetailsService userService) {
+  public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, UserPrincipalDetailsService userDetailService, UserService userService) {
     this.jwt = jwt;
     this.jwtTokenConfigure = jwtTokenConfigure;
-    this.userService = userService;
+    this.userDetailService = userDetailService;
   }
 
   @Override
@@ -40,17 +44,15 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
     web.ignoring().antMatchers("/swagger-resources", "/webjars/**", "/static/**", "/templates/**", "/h2/**");
   }
 
+
   @Autowired
-  public void configureAuthentication(AuthenticationManagerBuilder builder) {
-    builder.authenticationProvider(authenticationProvider());
+  public void configureAuthentication(AuthenticationManagerBuilder builder, JwtAuthenticationProvider authenticationProvider) {
+    builder.authenticationProvider(authenticationProvider);
   }
 
   @Bean
-  DaoAuthenticationProvider authenticationProvider(){
-    DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-    daoAuthenticationProvider.setUserDetailsService(userService);
-    return daoAuthenticationProvider;
+  public JwtAuthenticationProvider jwtAuthenticationProvider() {
+    return new JwtAuthenticationProvider(jwt, userDetailService);
   }
 
   @Bean
@@ -69,7 +71,7 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
 */
 
   @Bean
-  public JwtAuthenticationFilter jwtAuthorizationFilter() {
+  public JwtAuthenticationFilter jwtAuthorizationFilter(){
     return new JwtAuthenticationFilter(jwtTokenConfigure.getHeader(), jwt);
   }
 
@@ -90,9 +92,9 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
             // configure access rules
             .antMatchers("/api/auth").permitAll()
             .antMatchers("/api/user/join").permitAll()
-            //.antMatchers("/api/users").hasRole(Role.ADMIN.name())
-            .antMatchers("/api/**").authenticated()
-            .anyRequest().authenticated();
+            .antMatchers("/api/users").hasRole(Role.ADMIN.name())
+            .antMatchers("/api/**").hasRole(Role.USER.name())
+            .anyRequest().permitAll();
 
     http
             .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

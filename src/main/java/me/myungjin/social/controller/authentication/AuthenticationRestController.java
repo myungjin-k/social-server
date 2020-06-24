@@ -2,6 +2,7 @@ package me.myungjin.social.controller.authentication;
 
 import me.myungjin.social.controller.ApiResult;
 import me.myungjin.social.error.UnauthorizedException;
+import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.AuthenticationRequest;
 import me.myungjin.social.security.AuthenticationResult;
 import org.springframework.security.authentication.AuthenticationManager;
