@@ -2,10 +2,7 @@ package me.myungjin.social.configure;
 
 import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;
-import me.myungjin.social.security.Jwt;
-import me.myungjin.social.security.JwtAuthenticationFilter;
-import me.myungjin.social.security.JwtAuthenticationProvider;
-import me.myungjin.social.security.UserPrincipalDetailsService;
+import me.myungjin.social.security.*;
 import me.myungjin.social.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,11 +29,17 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
 
   private final UserPrincipalDetailsService userDetailService;
 
+  private final JwtAccessDeniedHandler accessDeniedHandler;
 
-  public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, UserPrincipalDetailsService userDetailService, UserService userService) {
+  private final EntryPointUnauthorizedHandler unauthorizedHandler;
+
+
+  public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, UserPrincipalDetailsService userDetailService, JwtAccessDeniedHandler accessDeniedHandler, EntryPointUnauthorizedHandler unauthorizedHandler) {
     this.jwt = jwt;
     this.jwtTokenConfigure = jwtTokenConfigure;
     this.userDetailService = userDetailService;
+    this.accessDeniedHandler = accessDeniedHandler;
+    this.unauthorizedHandler = unauthorizedHandler;
   }
 
   @Override
@@ -60,16 +63,6 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
   }
-/*
-
-  @Bean
-  public JwtAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
-    JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwt, jwtTokenConfigure.getHeader(), authenticationManagerBean());
-    filter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/**"));
-    return filter;
-  }
-*/
-
   @Bean
   public JwtAuthenticationFilter jwtAuthorizationFilter(){
     return new JwtAuthenticationFilter(jwtTokenConfigure.getHeader(), jwt);
@@ -85,6 +78,10 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
     http
             // remove csrf and state in session because in jwt we do not need them
             .csrf().disable()
+            .exceptionHandling()
+            .accessDeniedHandler(accessDeniedHandler)
+            .authenticationEntryPoint(unauthorizedHandler)
+            .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
            //.addFilter(new JwtAuthenticationFilter(authenticationManager(),  this.userRepository))
