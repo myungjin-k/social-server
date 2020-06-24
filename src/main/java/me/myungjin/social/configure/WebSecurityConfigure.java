@@ -1,6 +1,5 @@
 package me.myungjin.social.configure;
 
-import me.myungjin.social.model.user.Role;
 import me.myungjin.social.security.Jwt;
 import me.myungjin.social.security.JwtAuthenticationFilter;
 import me.myungjin.social.security.UserPrincipalDetailsService;
@@ -18,7 +17,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -60,12 +58,19 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
   }
+/*
 
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
     JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwt, jwtTokenConfigure.getHeader(), authenticationManagerBean());
     filter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/**"));
     return filter;
+  }
+*/
+
+  @Bean
+  public JwtAuthenticationFilter jwtAuthorizationFilter() {
+    return new JwtAuthenticationFilter(jwtTokenConfigure.getHeader(), jwt);
   }
 
   @Bean
@@ -88,7 +93,8 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
             //.antMatchers("/api/users").hasRole(Role.ADMIN.name())
             .antMatchers("/api/**").authenticated()
             .anyRequest().authenticated();
+
     http
-            .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 }

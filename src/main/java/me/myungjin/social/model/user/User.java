@@ -32,8 +32,13 @@ public class User {
 
     private final Role role;
 
+
     public User(String name, String email, String password) {
         this(null, name, email, password, 0, null, null, null);
+    }
+
+    public User(Long key, String name, String email) {
+        this(key, name, email, "[PROTECTED]", 0, null, null, null);
     }
 
     public User(Long seq, String name, String email, String password, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt, Role role) {
