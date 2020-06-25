@@ -9,18 +9,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 public class JwtAuthenticationProvider extends DaoAuthenticationProvider {
 
     private final Jwt jwt;
 
-    private final UserDetailsService userDetailsService;
+    private final UserPrincipalDetailsService userDetailsService;
 
-    public JwtAuthenticationProvider(Jwt jwt, UserDetailsService userDetailsService) {
+    public JwtAuthenticationProvider(Jwt jwt, UserPrincipalDetailsService userDetailsService) {
         this.jwt = jwt;
         this.userDetailsService = userDetailsService;
         setUserDetailsService(userDetailsService);
@@ -36,10 +34,10 @@ public class JwtAuthenticationProvider extends DaoAuthenticationProvider {
     private Authentication processUserAuthentication(AuthenticationRequest request) {
         try {
             UserPrincipal userPrincipal = (UserPrincipal) userDetailsService.loadUserByUsername(request.getPrincipal());
-            User user = userPrincipal.getUser();
             UsernamePasswordAuthenticationToken authenticated =
-                    new UsernamePasswordAuthenticationToken(user.getSeq(), null, createAuthorityList(user.getRole().value()));
-            String apiToken = user.newApiToken(jwt, new String[]{user.getRole().value()});
+                    new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
+            String apiToken = userPrincipal.newApiToken(jwt);
+            User user = userDetailsService.login(userPrincipal.toUser(), request.getCredentials());
             authenticated.setDetails(new AuthenticationResult(apiToken, user));
             return authenticated;
         } catch (NotFoundException e) {

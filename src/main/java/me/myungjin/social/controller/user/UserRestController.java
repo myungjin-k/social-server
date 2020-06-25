@@ -41,8 +41,8 @@ public class UserRestController {
     @GetMapping(path = "user/me")
     public ApiResult<User> me(@AuthenticationPrincipal UserPrincipal authentication) {
         return OK(
-                userService.findById(Id.of(User.class, authentication.getUser().getSeq()))
-                        .orElseThrow(() -> new NotFoundException(User.class, authentication.getUser().getSeq()))
+                userService.findById(authentication.id)
+                        .orElseThrow(() -> new NotFoundException(User.class, authentication.id))
         );
     }
 }

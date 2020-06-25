@@ -39,17 +39,14 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
 
   private final JwtTokenConfigure jwtTokenConfigure;
 
-  private final UserPrincipalDetailsService userDetailService;
-
   private final JwtAccessDeniedHandler accessDeniedHandler;
 
   private final EntryPointUnauthorizedHandler unauthorizedHandler;
 
 
-  public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, UserPrincipalDetailsService userDetailService, JwtAccessDeniedHandler accessDeniedHandler, EntryPointUnauthorizedHandler unauthorizedHandler) {
+  public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure, JwtAccessDeniedHandler accessDeniedHandler, EntryPointUnauthorizedHandler unauthorizedHandler) {
     this.jwt = jwt;
     this.jwtTokenConfigure = jwtTokenConfigure;
-    this.userDetailService = userDetailService;
     this.accessDeniedHandler = accessDeniedHandler;
     this.unauthorizedHandler = unauthorizedHandler;
   }
@@ -66,8 +63,8 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public JwtAuthenticationProvider jwtAuthenticationProvider() {
-    return new JwtAuthenticationProvider(jwt, userDetailService);
+  public JwtAuthenticationProvider jwtAuthenticationProvider(Jwt jwt, UserPrincipalDetailsService userService) {
+    return new JwtAuthenticationProvider(jwt, userService);
   }
 
   @Bean
@@ -127,7 +124,7 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/auth").permitAll()
             .antMatchers("/api/user/join").permitAll()
             .antMatchers("/api/users").hasRole(Role.ADMIN.name())
-            .antMatchers("/api/**").authenticated()
+            .antMatchers("/api/**").hasRole(Role.USER.name())
             .accessDecisionManager(accessDecisionManager())
             .anyRequest().permitAll();
 

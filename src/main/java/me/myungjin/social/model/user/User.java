@@ -1,6 +1,6 @@
 package me.myungjin.social.model.user;
-import me.myungjin.social.model.commons.Id;
-import me.myungjin.social.security.Jwt;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +23,7 @@ public class User {
 
     private final String name;
 
+    @JsonIgnore
     private String password;
 
     private int loginCount;
@@ -33,13 +34,12 @@ public class User {
 
     private final Role role;
 
+    public User(Long seq, String name, String email, String password, Role role) {
+        this(seq, name, email, password, 0, null, null, role);
+    }
 
     public User(String name, String email, String password) {
         this(null, name, email, password, 0, null, null, null);
-    }
-
-    public User(Long key, String name, String email) {
-        this(key, name, email, "[PROTECTED]", 0, null, null, null);
     }
 
     public User(Long seq, String name, String email, String password, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt, Role role) {
@@ -67,11 +67,6 @@ public class User {
     public void afterLoginSuccess() {
         loginCount++;
         lastLoginAt = now();
-    }
-
-    public String newApiToken(Jwt jwt, String[] roles) {
-        Jwt.Claims claims = Jwt.Claims.of(seq, name, email, roles);
-        return jwt.newToken(claims);
     }
 
     public Long getSeq() {
@@ -104,10 +99,6 @@ public class User {
 
     public Role getRole() {
         return role;
-    }
-
-    public Id<User, Long> getUserId(){
-        return Id.of(User.class, seq);
     }
 
     // equals 와 hashcode
