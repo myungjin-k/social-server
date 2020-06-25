@@ -51,12 +51,12 @@ public class ConnectionBasedVoter implements AccessDecisionVoter<FilterInvocatio
     Id<User, Long> targetId = obtainTargetId(request);
 
     // 본인 자신
-    if (jwtAuth.getUser().getUserId().equals(targetId)) {
+    if (jwtAuth.id.equals(targetId)) {
       return ACCESS_GRANTED;
     }
 
     // 친구IDs 조회 후 targetId가 포함되는지 확인한다.
-    List<Id<User, Long>> connectedIds = userService.findConnectedIds(jwtAuth.getUser().getUserId());
+    List<Id<User, Long>> connectedIds = userService.findConnectedIds(jwtAuth.id);
     if (connectedIds.contains(targetId)) {
       return ACCESS_GRANTED;
     }

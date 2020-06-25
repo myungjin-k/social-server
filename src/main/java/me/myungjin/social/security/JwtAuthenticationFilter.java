@@ -1,11 +1,11 @@
 package me.myungjin.social.security;
 
+import me.myungjin.social.model.commons.Id;
+import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.GenericFilterBean;
@@ -19,13 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class JwtAuthenticationFilter extends GenericFilterBean {
@@ -65,12 +61,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     Long userKey = claims.userKey;
                     String name = claims.name;
                     String email = claims.email;
+                    String[] role = claims.roles;
 
-                    List<GrantedAuthority> authorities = obtainAuthorities(claims);
-
-                    if (nonNull(userKey) && isNotEmpty(name) && nonNull(email) && authorities.size() > 0) {
+                    if (nonNull(userKey) && isNotEmpty(name) && nonNull(email) && role.length > 0) {
+                        UserPrincipal userPrincipal =
+                                new UserPrincipal(Id.of(User.class, userKey), name, email, "[PROTECTED]", Role.of(role[0]));
                         UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(new UserPrincipal(new User(userKey, name, email)), null, authorities);
+                                new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
@@ -93,13 +90,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             return remain < refreshRangeMillis;
         }
         return false;
-    }
-
-    private List<GrantedAuthority> obtainAuthorities(Jwt.Claims claims) {
-        String[] roles = claims.roles;
-        return roles == null || roles.length == 0 ?
-                Collections.emptyList() :
-                Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(toList());
     }
 
     private String obtainAuthorizationToken(HttpServletRequest request) {
