@@ -1,4 +1,5 @@
 package me.myungjin.social.model.user;
+import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.security.Jwt;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -103,6 +104,10 @@ public class User {
 
     public Role getRole() {
         return role;
+    }
+
+    public Id<User, Long> getUserId(){
+        return Id.of(User.class, seq);
     }
 
     // equals 와 hashcode
