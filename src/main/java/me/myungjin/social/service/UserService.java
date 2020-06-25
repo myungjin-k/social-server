@@ -34,20 +34,6 @@ public class UserService {
         return findByEmail(email).map(u -> new User.Builder(user).seq(-2L).build()).orElseGet(() -> save(user));
     }
 
-    @Transactional
-    public User login(String email, String password) {
-        checkNotNull(email, "email must be provided.");
-        checkNotNull(password, "password must be provided.");
-
-        User user = findByEmail(email)
-                .orElseThrow(() -> new NotFoundException(User.class, email));
-       // TODO password를 왜 확인하는지?
-       // user.login(passwordEncoder, password);
-        user.afterLoginSuccess();
-        update(user);
-        return user;
-    }
-
     @Transactional(readOnly = true)
     public Optional<User> findById(Id<User, Long> userId) {
         checkNotNull(userId.value(), "userId must be provided.");

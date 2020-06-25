@@ -53,33 +53,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         this.headerKey = headerKey;
         this.jwt = jwt;
     }
-/*
-
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        try {
-            // Grab credentials and map then to LoginViewModel
-            AuthenticationRequest authReq = new ObjectMapper().readValue(request.getInputStream(), AuthenticationRequest.class);
-
-            User user = userService.login(authReq.getPrincipal(), authReq.getCredentials());
-            String apiToken = user.newApiToken(jwt, new String[]{Role.USER.value()});
-            UsernamePasswordAuthenticationToken authenticated = new UsernamePasswordAuthenticationToken(user.getName(), null, createAuthorityList(user.getRole().value()));
-            authenticated.setDetails(new AuthenticationResult(apiToken, user));
-
-            // Authenticate user
-            return authenticationManager.authenticate(authenticated);
-        } catch (NotFoundException e) {
-            throw new UsernameNotFoundException(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            throw new BadCredentialsException(e.getMessage());
-        } catch (DataAccessException e) {
-            throw new AuthenticationServiceException(e.getMessage(), e);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-*/
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
