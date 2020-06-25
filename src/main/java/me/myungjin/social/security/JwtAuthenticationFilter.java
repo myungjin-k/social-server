@@ -1,24 +1,14 @@
 package me.myungjin.social.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import me.myungjin.social.error.NotFoundException;
-import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;
-import me.myungjin.social.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.GenericFilterBean;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -37,7 +27,6 @@ import java.util.regex.Pattern;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 public class JwtAuthenticationFilter extends GenericFilterBean {
 

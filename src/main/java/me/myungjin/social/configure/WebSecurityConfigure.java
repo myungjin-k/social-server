@@ -1,14 +1,11 @@
 package me.myungjin.social.configure;
 
 import me.myungjin.social.model.user.Role;
-import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.*;
-import me.myungjin.social.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -64,7 +61,7 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
     return super.authenticationManagerBean();
   }
   @Bean
-  public JwtAuthenticationFilter jwtAuthorizationFilter(){
+  public JwtAuthenticationFilter jwtAuthenticationFilter(){
     return new JwtAuthenticationFilter(jwtTokenConfigure.getHeader(), jwt);
   }
 
@@ -94,6 +91,6 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
             .anyRequest().permitAll();
 
     http
-            .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 }
