@@ -27,8 +27,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.client.RestTemplate;
-import sun.security.util.SecurityConstants;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +39,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.math.NumberUtils.toLong;
-import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 @Configuration
 @EnableWebSecurity
@@ -166,12 +163,6 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
       Jwt.Claims claims = Jwt.Claims.of(Integer.parseInt(id), name, email, new String[]{Role.USER.value()});
       String token = jwt.newToken(claims);
 
-/*      String token = JWT.create()
-              .withClaim("id", id)
-              .withClaim("name", name)
-              .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-              .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
-*/
       response.addHeader("Authorization", "Bearer " + token);
     }
   }
