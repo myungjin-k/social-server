@@ -20,10 +20,18 @@ spring:
       maximum-pool-size: 5
       pool-name: H2_DB
 server:
-  port: 7070
+    port: 7070
 jwt:
   token:
     header: api_key
     issuer: social_server
     clientSecret: Rel3Bjce2MajBo09qgkNgYaTuzvJe8iwnBFhsDS5
     expirySeconds: 6000
+social:
+  kakao:
+    client_id: 0dabb025ff279ee1400f0785ba058c89 # 앱생성시 받은 REST API 키
+    redirect: /api/auth/kakao
+    url:
+      login: https://kauth.kakao.com/oauth/authorize?client_id=0dabb025ff279ee1400f0785ba058c89&redirect_uri=http://localhost:7070/api/auth/kakao&response_type=code
+      token: https://kauth.kakao.com/oauth/token
+      profile: https://kapi.kakao.com/v2/user/me

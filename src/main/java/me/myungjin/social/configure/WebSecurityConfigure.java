@@ -18,19 +18,30 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.client.RestTemplate;
+import sun.security.util.SecurityConstants;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.math.NumberUtils.toLong;
+import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 @Configuration
 @EnableWebSecurity
@@ -127,16 +138,41 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
         .and()
       .authorizeRequests()
         .antMatchers("/api/auth").permitAll()
+        .antMatchers("/login/oauth2/code/*").permitAll()
         .antMatchers("/api/user/join").permitAll()
         .antMatchers("/api/users").hasRole(Role.ADMIN.name())
         .antMatchers("/api/**").authenticated()
         .accessDecisionManager(accessDecisionManager())
         .anyRequest().permitAll()
         .and()
+       .oauth2Login()
+        .successHandler(new MyOAuth2SuccessHandler())
+        .and()
       .formLogin()
         .disable();
     http
       .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
   }
+  public class MyOAuth2SuccessHandler implements AuthenticationSuccessHandler {
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+      String id = authentication.getName();
 
+      LinkedHashMap<String, Object> properties = (LinkedHashMap<String, Object>) ((DefaultOAuth2User)authentication.getPrincipal()).getAttributes().get("properties");
+      LinkedHashMap<String, Object> kakaoAccount = (LinkedHashMap<String, Object>) ((DefaultOAuth2User)authentication.getPrincipal()).getAttributes().get("kakao_account");
+
+      String name = (String) properties.get("nickname");
+      String email = (String) kakaoAccount.get("email");
+      Jwt.Claims claims = Jwt.Claims.of(Integer.parseInt(id), name, email, new String[]{Role.USER.value()});
+      String token = jwt.newToken(claims);
+
+/*      String token = JWT.create()
+              .withClaim("id", id)
+              .withClaim("name", name)
+              .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+              .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
+*/
+      response.addHeader("Authorization", "Bearer " + token);
+    }
+  }
 }
