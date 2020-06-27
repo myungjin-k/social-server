@@ -10,7 +10,7 @@ public enum  CustomOAuthProvider {
         @Override
         public ClientRegistration.Builder getBuilder() {
             return getBuilder("kakao", ClientAuthenticationMethod.POST)
-                    .scope("profile", "talk_message") // 요청할 권한
+                    .scope("profile", "account_email") // 요청할 권한
                     .authorizationUri("https://kauth.kakao.com/oauth/authorize") // authorization code 얻는 API
                     .tokenUri("https://kauth.kakao.com/oauth/token") // access Token 얻는 API
                     .userInfoUri("https://kapi.kakao.com/v2/user/me") // 유저 정보 조회 API

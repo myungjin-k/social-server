@@ -37,7 +37,11 @@ public class MyOAuth2AuthorizedClientService implements OAuth2AuthorizedClientSe
         String name = (String) ((LinkedHashMap) ((LinkedHashMap) oauth2User.getAttribute("kakao_account")).get("profile")).get("nickname");
 
         User user = new User(name, account, accessToken.getTokenValue());
-        userRepository.save(user);
+        if(userRepository.findByEmail(account).isPresent()){
+            userRepository.update(user);
+        } else {
+            userRepository.save(user);
+        }
     }
 
     @Override

@@ -9,15 +9,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static me.myungjin.social.controller.ApiResult.OK;
 
 
 @RestController
+@RequestMapping("api")
 public class AuthenticationRestController {
 
   private final AuthenticationManager authenticationManager;
@@ -27,7 +28,7 @@ public class AuthenticationRestController {
     this.authenticationManager = authenticationManager;
   }
 
-  @PostMapping("api/auth")
+  @PostMapping("auth")
   public ApiResult<AuthenticationResult> authentication(@RequestBody AuthenticationRequest authRequest) throws UnauthorizedException {
     try {
       JwtAuthenticationToken authToken = new JwtAuthenticationToken(authRequest.getPrincipal(), authRequest.getCredentials());
@@ -41,12 +42,5 @@ public class AuthenticationRestController {
     }
   }
 
-  @GetMapping(path = "/login/oauth2/code/{registrationId}")
-  public  ApiResult<Map<String, String>> socialAuthentication (@PathVariable String registrationId, @RequestParam String code, @RequestParam String state  ){
-    Map<String, String> returnMap = new HashMap<>();
-    returnMap.put("registrationId", registrationId);
-    returnMap.put("code", code);
-    returnMap.put("state", state);
-    return OK(returnMap);
-  }
+
 }
