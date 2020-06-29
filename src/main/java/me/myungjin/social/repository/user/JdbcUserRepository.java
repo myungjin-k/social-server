@@ -1,4 +1,4 @@
-package me.myungjin.social.repository;
+package me.myungjin.social.repository.user;
 
 import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;

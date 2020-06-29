@@ -3,7 +3,7 @@ package me.myungjin.social.service;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.commons.Id;
-import me.myungjin.social.repository.UserRepository;
+import me.myungjin.social.repository.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
