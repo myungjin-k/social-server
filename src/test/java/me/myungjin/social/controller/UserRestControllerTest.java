@@ -1,7 +1,7 @@
 package me.myungjin.social.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.myungjin.social.model.api.request.JoinRequest;
+import me.myungjin.social.controller.user.JoinRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;

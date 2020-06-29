@@ -1,4 +1,4 @@
-package me.myungjin.social.model.api.response;
+package me.myungjin.social.controller.user;
 
 
 import me.myungjin.social.controller.ApiError;
