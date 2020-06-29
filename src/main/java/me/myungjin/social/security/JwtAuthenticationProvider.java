@@ -1,9 +1,8 @@
 package me.myungjin.social.security;
 
 import me.myungjin.social.error.NotFoundException;
-import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;
-import me.myungjin.social.service.UserService;
+import me.myungjin.social.service.user.UserService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;

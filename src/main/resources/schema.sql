@@ -9,6 +9,7 @@ CREATE TABLE users (
                        login_count       int NOT NULL DEFAULT 0,
                        last_login_at     datetime DEFAULT NULL,
                        create_at         datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+                       role              varchar(10) DEFAULT 'USER',
                        PRIMARY KEY (seq),
                        CONSTRAINT unq_user_email UNIQUE (email)
 );

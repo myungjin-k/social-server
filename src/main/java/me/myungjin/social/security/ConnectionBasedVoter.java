@@ -2,7 +2,7 @@ package me.myungjin.social.security;
 
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.User;
-import me.myungjin.social.service.UserService;
+import me.myungjin.social.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;

@@ -5,9 +5,8 @@ import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.api.request.JoinRequest;
-import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.security.JwtAuthentication;
-import me.myungjin.social.service.UserService;
+import me.myungjin.social.service.user.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

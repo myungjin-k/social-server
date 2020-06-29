@@ -1,4 +1,4 @@
-package me.myungjin.social.service;
+package me.myungjin.social.service.user;
 
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.user.User;

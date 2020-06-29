@@ -1,8 +1,8 @@
 package me.myungjin.social.repository.post;
 
-import com.github.prgrms.social.model.commons.Id;
-import com.github.prgrms.social.model.post.Post;
-import com.github.prgrms.social.model.user.User;
+import me.myungjin.social.model.commons.Id;
+import me.myungjin.social.model.post.Post;
+import me.myungjin.social.model.user.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
