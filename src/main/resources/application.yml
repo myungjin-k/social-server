@@ -24,6 +24,6 @@ server:
 jwt:
   token:
     header: api_key
-    issuer: social_server
-    clientSecret: Rel3Bjce2MajBo09qgkNgYaTuzvJe8iwnBFhsDS5
+    issuer: social
+    clientSecret: bXl1bmdqaW4=
     expirySeconds: 6000

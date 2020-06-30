@@ -21,8 +21,8 @@ class JwtTest {
 
   @BeforeAll
   void setUp() {
-    String issuer = "social-server";
-    String clientSecret = "Rel5Bjce6MajBo08qgkNgYaTuzvJe6iwnBFhsD11";
+    String issuer = "social";
+    String clientSecret = "bXl1bmdqaW4=";
     int expirySeconds = 10;
 
     jwt = new Jwt(issuer, clientSecret, expirySeconds);
