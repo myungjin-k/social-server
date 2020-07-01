@@ -6,6 +6,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.zaxxer.hikari.HikariDataSource;
+import me.myungjin.social.aws.S3Client;
 import me.myungjin.social.security.Jwt;
 import me.myungjin.social.util.MessageUtils;
 import net.sf.log4jdbc.Log4jdbcProxyDataSource;
@@ -62,4 +63,10 @@ public class ServiceConfigure {
             )
             .build();
   }
+
+  @Bean
+  public S3Client s3Client(AmazonS3 amazonS3, AwsConfigure awsConfigure) {
+    return new S3Client(amazonS3, awsConfigure.getUrl(), awsConfigure.getBucketName());
+  }
+
 }

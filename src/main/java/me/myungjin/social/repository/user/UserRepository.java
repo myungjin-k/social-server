@@ -1,5 +1,6 @@
 package me.myungjin.social.repository.user;
 
+import me.myungjin.social.model.user.ConnectedUser;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.commons.Id;
 
@@ -20,5 +21,8 @@ public interface UserRepository {
 
     void update(User user);
 
+    List<ConnectedUser> findAllConnectedUser(Id<User, Long> userId);
+
     List<Id<User, Long>> findConnectedIds(Id<User, Long> userId);
+
 }

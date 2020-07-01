@@ -24,6 +24,8 @@ public class User {
 
     private String password;
 
+    private final String profileImageUrl;
+
     private int loginCount;
 
     private LocalDateTime lastLoginAt;
@@ -33,10 +35,14 @@ public class User {
     private final Role role;
 
     public User(String name, String email, String password) {
-        this(null, name, email, password, 0, null, null, null);
+        this(name, email, password, null);
     }
 
-    public User(Long seq, String name, String email, String password, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt, Role role) {
+    public User(String name, String email, String password, String profileImageUrl) {
+        this(null, name, email, password, profileImageUrl, 0, null, null, null);
+    }
+
+    public User(Long seq, String name, String email, String password,  String profileImageUrl, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt, Role role) {
         checkNotNull(name, "name must be provided.");
         checkArgument(name.length() >=1 && name.length() <= 10,
                 "name length must be between 1 and 10 characters."
@@ -47,6 +53,7 @@ public class User {
         this.email = email;
         this.name = name;
         this.password = password;
+        this.profileImageUrl = profileImageUrl;
         this.loginCount = loginCount;
         this.lastLoginAt = lastLoginAt;
         this.createAt = defaultIfNull(createAt, now());
@@ -82,6 +89,10 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
     }
 
     public int getLoginCount() {
@@ -126,6 +137,7 @@ public class User {
                 .append("email", email)
                 .append("name", name)
                 .append("password", "[PROTECTED]")
+                .append("profileImageUrl", profileImageUrl)
                 .append("loginCount", loginCount)
                 .append("lastLoginAt", lastLoginAt)
                 .append("createAt", createAt)
@@ -138,6 +150,7 @@ public class User {
         private String email;
         private String name;
         private String password;
+        private String profileImageUrl;
         private int loginCount;
         private LocalDateTime lastLoginAt;
         private LocalDateTime createAt;
@@ -151,6 +164,7 @@ public class User {
             this.email = user.email;
             this.name = user.name;
             this.password = user.password;
+            this.profileImageUrl = user.profileImageUrl;
             this.loginCount = user.loginCount;
             this.lastLoginAt = user.lastLoginAt;
             this.createAt = user.createAt;
@@ -177,6 +191,11 @@ public class User {
             return this;
         }
 
+        public Builder profileImageUrl(String profileImageUrl){
+            this.profileImageUrl = profileImageUrl;
+            return this;
+        }
+
         public Builder loginCount(int loginCount){
             this.loginCount = loginCount;
             return this;
@@ -197,7 +216,7 @@ public class User {
             return this;
         }
         public User build() {
-            return new User(seq, name, email, password, loginCount, lastLoginAt, createAt, role);
+            return new User(seq, name, email, password, profileImageUrl, loginCount, lastLoginAt, createAt, role);
         }
     }
 }

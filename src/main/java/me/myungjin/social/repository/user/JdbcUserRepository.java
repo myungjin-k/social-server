@@ -1,5 +1,6 @@
 package me.myungjin.social.repository.user;
 
+import me.myungjin.social.model.user.ConnectedUser;
 import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.commons.Id;
@@ -80,6 +81,21 @@ public class JdbcUserRepository implements UserRepository{
             user.getLoginCount(),
             user.getLastLoginAt().orElse(null),
             user.getSeq()
+        );
+    }
+
+    @Override
+    public List<ConnectedUser> findAllConnectedUser(Id<User, Long> userId) {
+        return jdbcTemplate.query(
+                "SELECT u.seq,u.name,u.email,u.profile_image_url,c.granted_at FROM connections c JOIN users u ON c.target_seq=u.seq WHERE c.user_seq=? AND c.granted_at is not null ORDER BY seq DESC",
+                new Object[]{userId.value()},
+                (rs, rowNum) -> new ConnectedUser(
+                        rs.getLong("seq"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("profile_image_url"),
+                        dateTimeOf(rs.getTimestamp("granted_at"))
+                )
         );
     }
 

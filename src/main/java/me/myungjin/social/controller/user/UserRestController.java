@@ -3,15 +3,20 @@ package me.myungjin.social.controller.user;
 import me.myungjin.social.controller.ApiResult;
 import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
+import me.myungjin.social.model.user.ConnectedUser;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.JwtAuthentication;
 import me.myungjin.social.service.user.UserService;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static me.myungjin.social.controller.ApiResult.OK;
+import static me.myungjin.social.model.commons.AttachedFile.toAttachedFile;
 
 @RestController
 @RequestMapping("api")
@@ -28,18 +33,19 @@ public class UserRestController {
         return OK(userService.findAllUsers());
     }
 
-    @PostMapping(path = "user/join")
-    public ApiResult<User> join(@RequestBody JoinRequest joinRequest) {
-        User user = userService.join(joinRequest.getName(), joinRequest.getPrincipal(), joinRequest.getCredentials());
-        if(user.getSeq() == -2)
-            throw new DuplicateKeyException(User.class, user.getEmail());
-        return OK(user);
-    }
+
 
     @GetMapping(path = "user/me")
     public ApiResult<User> me(@AuthenticationPrincipal JwtAuthentication authentication) {
         return OK(
                 userService.findById(authentication.id).orElseThrow(() -> new NotFoundException(User.class, authentication.id))
+        );
+    }
+
+    @GetMapping(path = "user/connections")
+    public ApiResult<List<ConnectedUser>> connections(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return OK(
+                userService.findAllConnectedUser(authentication.id)
         );
     }
 }
