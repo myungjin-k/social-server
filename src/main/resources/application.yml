@@ -27,3 +27,11 @@ jwt:
     issuer: social
     clientSecret: bXl1bmdqaW4=
     expirySeconds: 6000
+cloud:
+  aws:
+    s3:
+      region: ap-northeast-2
+      accessKey: ACCESS_KEY
+      secretKey: SECRET_KEY
+      url: https://s3.ap-northeast-2.amazonaws.com
+      bucketName: myungjin-social
