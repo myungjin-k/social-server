@@ -84,6 +84,20 @@ public class UserService {
         return user;
     }
 
+    @Transactional
+    public Optional<User> modify(Id<User, Long> userId, String name, AttachedFile profileFile) {
+        checkNotNull(userId.value(), "userId must be provided.");
+        return findById(userId)
+                .map(me -> {
+                    if(name != null)
+                        me.modifyName(name);
+                    if(profileFile != null)
+                        me.modifyProfileImageUrl(uploadProfileImage(profileFile).orElse(null));
+                    update(me);
+                    return me;
+                });
+    }
+
     @Transactional(readOnly = true)
     public Optional<User> findById(Id<User, Long> userId) {
         checkNotNull(userId.value(), "userId must be provided.");

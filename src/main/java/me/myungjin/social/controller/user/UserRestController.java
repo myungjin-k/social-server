@@ -33,12 +33,33 @@ public class UserRestController {
         return OK(userService.findAllUsers());
     }
 
-
+    @PostMapping(path = "user/join", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResult<User> join(@ModelAttribute JoinRequest joinRequest,
+                                @RequestPart(required = false) MultipartFile file) throws IOException {
+        User user = userService.join(
+                joinRequest.getName(),
+                joinRequest.getPrincipal(),
+                joinRequest.getCredentials(),
+                toAttachedFile(file));
+        if(user.getSeq() == -2)
+            throw new DuplicateKeyException(User.class, user.getEmail());
+        return OK(user);
+    }
 
     @GetMapping(path = "user/me")
     public ApiResult<User> me(@AuthenticationPrincipal JwtAuthentication authentication) {
         return OK(
                 userService.findById(authentication.id).orElseThrow(() -> new NotFoundException(User.class, authentication.id))
+        );
+    }
+
+    @PutMapping(path = "user/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResult<User> modifyInfo(@AuthenticationPrincipal JwtAuthentication authentication,
+                                  @ModelAttribute ModifyUserRequest userModifyRequest,
+                                  @RequestPart(required = false) MultipartFile file) throws IOException {
+        return OK(
+                userService.modify(authentication.id, userModifyRequest.getName(), toAttachedFile(file))
+                        .orElseThrow(() -> new NotFoundException(User.class, authentication.id))
         );
     }
 
@@ -48,4 +69,5 @@ public class UserRestController {
                 userService.findAllConnectedUser(authentication.id)
         );
     }
+
 }

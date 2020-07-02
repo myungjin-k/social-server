@@ -13,6 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class User {
 
@@ -20,11 +21,11 @@ public class User {
 
     private final String email;
 
-    private final String name;
+    private String name;
 
     private String password;
 
-    private final String profileImageUrl;
+    private String profileImageUrl;
 
     private int loginCount;
 
@@ -73,6 +74,19 @@ public class User {
     public String newApiToken(Jwt jwt, String[] roles) {
         Jwt.Claims claims = Jwt.Claims.of(seq, name, email, roles);
         return jwt.newToken(claims);
+    }
+
+    public void modifyName(String name) {
+        checkNotNull(name, "name must be provided.");
+        checkArgument(name.length() >=1 && name.length() <= 10,
+                "name length must be between 1 and 10 characters."
+        );
+        this.name = name;
+    }
+
+    public void modifyProfileImageUrl(String profileImageUrl) {
+        checkNotNull(profileImageUrl, "profileImageUrl must be provided.");
+        this.profileImageUrl = profileImageUrl;
     }
 
     public Long getSeq() {

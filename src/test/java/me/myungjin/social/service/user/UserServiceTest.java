@@ -1,11 +1,13 @@
 package me.myungjin.social.service.user;
 
+import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.AttachedFile;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
 import me.myungjin.social.model.user.User;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,5 +115,28 @@ class UserServiceTest {
     assertThat(connectedIds, is(notNullValue()));
     assertThat(connectedIds.size(), is(1));
     assertThat(connectedIds.get(0).value(), is(2L));
+  }
+
+  @Test
+  @Order(7)
+  void 사용자_이름과_프로필을_수정한다() throws IOException {
+
+    URL testProfile = getClass().getResource("/feminist1.png");
+    File file = new File(testProfile.getFile());
+    FileInputStream input = new FileInputStream(file);
+    MultipartFile multipartFile =  new MockMultipartFile("file",
+            file.getName(), "image/jpeg", IOUtils.toByteArray(input));
+
+    Id<User, Long> authId = Id.of(User.class, 1L);
+    String newName = "newName";
+
+    User user = userService.modify(authId, newName, AttachedFile.toAttachedFile(multipartFile))
+            .orElseThrow(() -> new NotFoundException(User.class, authId.value()));
+
+    assertThat(user, is(notNullValue()));
+    assertThat(user.getName(), is(newName));
+    assertThat(user.getProfileImageUrl(), is(notNullValue()));
+
+    log.info("Modified user: {}", user);
   }
 }
