@@ -98,6 +98,21 @@ public class UserService {
                 });
     }
 
+    @Transactional
+    public Optional<User> modifyPassword(Id<User, Long> userId, String oldPassword, String newPassword) {
+        checkNotNull(userId.value(), "userId must be provided.");
+        checkNotNull(oldPassword, "oldPassword must be provided.");
+        checkNotNull(newPassword, "newPassword must be provided.");
+        return findById(userId)
+                .map(me -> {
+                    me.login(passwordEncoder, oldPassword);
+                    me.modifyPassword(passwordEncoder.encode(newPassword));
+                    update(me);
+                    return me;
+                });
+    }
+
+
     @Transactional(readOnly = true)
     public Optional<User> findById(Id<User, Long> userId) {
         checkNotNull(userId.value(), "userId must be provided.");

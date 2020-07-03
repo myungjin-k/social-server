@@ -63,6 +63,15 @@ public class UserRestController {
         );
     }
 
+    @PatchMapping(path = "user/me/password")
+    public ApiResult<User> modifyPassword(@AuthenticationPrincipal JwtAuthentication authentication,
+                                      @RequestBody ModifyPasswordRequest passwordRequest){
+        return OK(
+                userService.modifyPassword(authentication.id, passwordRequest.getOldPassword(), passwordRequest.getPassword())
+                        .orElseThrow(() -> new NotFoundException(User.class, authentication.id))
+        );
+    }
+
     @GetMapping(path = "user/connections")
     public ApiResult<List<ConnectedUser>> connections(@AuthenticationPrincipal JwtAuthentication authentication) {
         return OK(

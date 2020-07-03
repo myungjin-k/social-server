@@ -89,6 +89,11 @@ public class User {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public void modifyPassword(String password) {
+        checkNotNull(password, "password must be provided.");
+        this.password = password;
+    }
+
     public Long getSeq() {
         return seq;
     }

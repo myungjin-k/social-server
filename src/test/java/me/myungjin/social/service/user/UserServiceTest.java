@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -137,6 +138,21 @@ class UserServiceTest {
     assertThat(user.getName(), is(newName));
     assertThat(user.getProfileImageUrl(), is(notNullValue()));
 
+    log.info("Modified user: {}", user);
+  }
+
+
+  @Test
+  @Order(8)
+  void 사용자_패스워드를_수정한다() {
+    Id<User, Long> authId = Id.of(User.class, 1L);
+    String newPassword = "newPassword";
+
+    User user = userService.modifyPassword(authId, password, newPassword)
+            .orElseThrow(() -> new NotFoundException(User.class, authId.value()));
+
+    assertThat(user, is(notNullValue()));
+    user.login(new BCryptPasswordEncoder(), newPassword);
     log.info("Modified user: {}", user);
   }
 }
