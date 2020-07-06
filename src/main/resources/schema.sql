@@ -57,3 +57,14 @@ CREATE TABLE likes (
                        CONSTRAINT fk_likes_to_user FOREIGN KEY (user_seq) REFERENCES users (seq) ON DELETE RESTRICT ON UPDATE RESTRICT,
                        CONSTRAINT fk_likes_to_post FOREIGN KEY (post_seq) REFERENCES posts (seq) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE subscriptions (
+                               seq         bigint NOT NULL AUTO_INCREMENT,
+                               user_seq    bigint NOT NULL,
+                               endpoint    varchar(200) NOT NULL,
+                               public_key  varchar(200) NOT NULL,
+                               auth        varchar(200) NOT NULL,
+                               create_at   datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+                               CONSTRAINT unq_subscriptions UNIQUE (user_seq, endpoint),
+                               CONSTRAINT fk_subscriptions_to_user FOREIGN KEY (user_seq) REFERENCES users (seq) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
