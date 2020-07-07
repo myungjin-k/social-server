@@ -32,7 +32,7 @@ dependencies {
 	compile ('org.lazyluke:log4jdbc-remix:0.2.7')
 	compile ('com.amazonaws:aws-java-sdk-s3:1.11.805')
 	compile ('org.bouncycastle:bcprov-jdk15on:1.64')
-	compile ('nl.martijndwars:web-push:5.0.2')
+	compile ('nl.martijndwars:web-push:5.1.1')
 	compile ('org.springframework.boot:spring-boot-configuration-processor')
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test')

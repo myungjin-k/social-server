@@ -5,6 +5,11 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.zaxxer.hikari.HikariDataSource;
 import me.myungjin.social.aws.S3Client;
 import me.myungjin.social.security.Jwt;
@@ -16,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.sql.DataSource;
 
@@ -69,4 +75,23 @@ public class ServiceConfigure {
     return new S3Client(amazonS3, awsConfigure.getUrl(), awsConfigure.getBucketName());
   }
 
+  @Bean
+  public Jackson2ObjectMapperBuilder configureObjectMapper() {
+    // Java time module
+   // JavaTimeModule jtm = new JavaTimeModule();
+    //jtm.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ISO_DATE_TIME));
+    Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder() {
+      @Override
+      public void configure(ObjectMapper objectMapper) {
+        super.configure(objectMapper);
+        objectMapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
+        objectMapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+      }
+    };
+    builder.serializationInclusion(JsonInclude.Include.NON_NULL);
+    builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    //builder.modulesToInstall(jtm);
+    return builder;
+  }
 }

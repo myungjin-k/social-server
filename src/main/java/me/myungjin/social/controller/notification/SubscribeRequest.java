@@ -14,7 +14,14 @@ public class SubscribeRequest {
 
     private String auth;
 
-    protected SubscribeRequest() {}
+    protected SubscribeRequest() {
+    }
+
+    public SubscribeRequest(String notificationEndPoint, String publicKey, String auth) {
+        this.notificationEndPoint = notificationEndPoint;
+        this.publicKey = publicKey;
+        this.auth = auth;
+    }
 
     public String getNotificationEndPoint() {
         return notificationEndPoint;
