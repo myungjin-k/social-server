@@ -2,35 +2,73 @@
 <html>
 <head>
     <title>Social</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><!--
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />-->
+
+    <link rel="stylesheet" href="/static/css/uikit.min.css" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="/static/js/uikit.min.js"></script>
+    <script src="/static/js/uikit-icons.min.js"></script>
 </head>
-<body>
+<body class="uk-container">
 <h1>Social</h1>
 <!--login-->
-<div class="col-md-12" id="div-login" style="display: none;">
-    <div class="col-md-4">
-        <form>
-            <div class="form-group">
-                <label for="email">이메일</label>
-                <input type="text" class="form-control" id="email" placeholder="이메일을 입력하세요">
+<div class="uk-vertical-align uk-text-center uk-height-1-1">
+    <div class="uk-vertical-align-middle" id="div-login" style="width: 250px; display: none;">
+        <form class="uk-panel uk-panel-box uk-form">
+            <div class="uk-form-row">
+                <input class="uk-width-1-1 uk-form-large" id="email" type="text" placeholder="email">
             </div>
-            <div class="form-group">
-                <label for="password">비밀번호</label>
-                <input type="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요">
+            <div class="uk-form-row">
+                <input class="uk-width-1-1 uk-form-large" id="password" type="password" placeholder="password">
+            </div>
+            <div class="uk-form-row">
+                <a class="uk-width-1-1 uk-button uk-button-primary uk-button-large" id="btn-auth" >Login</a>
+            </div>
+            <div class="uk-form-row uk-text-small">
+                <label class="uk-float-left"><input type="checkbox"> Remember Me</label>
+                <a class="uk-float-right uk-link uk-link-muted" href="#">Forgot Password?</a>
             </div>
         </form>
-        <button type="button" class="btn btn-primary" id="btn-auth">로그인</button>
+
     </div>
 </div>
 <!--posts-->
-<div class="col-md-12" id="div-posts-list" style="display: none;">
-    <div id="grid"></div>
+<div class="uk-overflow-auto" id="div-posts-list">
+    <table class="uk-table uk-table-divider uk-table-hover uk-table-responsive">
+        <thead>
+        <tr>
+            <th class="uk-table-shrink"></th>
+            <th class="uk-table-expand">내용</th>
+            <th class="uk-width-small">좋아요</th>
+            <th class="uk-width-small">댓글</th>
+            <th class="uk-table-shrink uk-text-nowrap">작성일시</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<!--
+<script>
+
+    var options = UIkit.util.$$('#js-size-switcher option').map(function (option) { return option.value; });
+
+    UIkit.util.on('#js-size-switcher', 'change', function () {
+        var value = this.value;
+        UIkit.util.$$('.uk-table').forEach(function (table) {
+            UIkit.util.removeClass(table, options);
+            UIkit.util.addClass(table, value);
+        });
+    });
+
+</script>-->
+
+
+<!--
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>--><!--
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>-->
 <!--index.js 추가-->
 <script src="/static/js/index.js"></script>
 </body>
