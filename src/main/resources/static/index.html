@@ -10,65 +10,93 @@
     <script src="/static/js/uikit.min.js"></script>
     <script src="/static/js/uikit-icons.min.js"></script>
 </head>
-<body class="uk-container">
-<h1>Social</h1>
+<body >
 <!--login-->
-<div class="uk-vertical-align uk-text-center uk-height-1-1">
-    <div class="uk-vertical-align-middle" id="div-login" style="width: 250px; display: none;">
+<div class="body-login uk-flex uk-flex-center uk-flex-middle uk-height-viewport"  id="div-login"  style="display: none;">
+    <div class="uk-width-medium uk-padding-small">
+        <div class="uk-text-center uk-margin-large uk-child-width-1-2">
+            <img src="img/login.png" alt="Logo">
+        </div>
         <form class="uk-panel uk-panel-box uk-form">
-            <div class="uk-form-row">
-                <input class="uk-width-1-1 uk-form-large" id="email" type="text" placeholder="email">
+            <div class="uk-margin-small">
+                <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: user"></span>
+                    <input class="uk-input uk-border-pill" id="email" required placeholder="Username" type="text">
+                </div>
             </div>
-            <div class="uk-form-row">
-                <input class="uk-width-1-1 uk-form-large" id="password" type="password" placeholder="password">
+            <div class="uk-margin-small">
+                <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: lock"></span>
+                    <input class="uk-input uk-border-pill" id="password" required placeholder="Password" type="password">
+                </div>
             </div>
-            <div class="uk-form-row">
-                <a class="uk-width-1-1 uk-button uk-button-primary uk-button-large" id="btn-auth" >Login</a>
+            <div class="uk-margin-small">
+                <a class="uk-button uk-button-primary uk-border-pill uk-width-1-" id="btn-auth" >Log in</a>
             </div>
-            <div class="uk-form-row uk-text-small">
-                <label class="uk-float-left"><input type="checkbox"> Remember Me</label>
-                <a class="uk-float-right uk-link uk-link-muted" href="#">Forgot Password?</a>
-            </div>
+            <!-- <div class="uk-form-row uk-text-small">
+                 <label class="uk-float-left"><input type="checkbox"> Remember Me</label>
+                 <a class="uk-float-right uk-link uk-link-muted" href="#">Forgot Password?</a>
+             </div>-->
         </form>
-
     </div>
 </div>
-<!--posts-->
-<div class="uk-overflow-auto" id="div-posts-list">
-    <table class="uk-table uk-table-divider uk-table-hover uk-table-responsive">
-        <thead>
-        <tr>
-            <th class="uk-table-shrink"></th>
-            <th class="uk-table-expand">내용</th>
-            <th class="uk-width-small">좋아요</th>
-            <th class="uk-width-small">댓글</th>
-            <th class="uk-table-shrink uk-text-nowrap">작성일시</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+<!-- navbar -->
+<div class="div-navbar uk-container-expand" style="display: none;">
+    <nav class="uk-navbar-container uk-margin" uk-navbar>
+        <div class="uk-navbar-left">
+            <a class="uk-navbar-item uk-logo" href="#">Logo</a>
+            <div class="uk-navbar-item">
+                <a class="uk-button uk-button-primary" href="#modal-new-post" uk-toggle>NEW POST</a>
+                <div id="modal-new-post" uk-modal>
+                    <div class="uk-modal-dialog" >
+                        <button class="uk-modal-close-default" type="button" uk-close></button>
+                        <div class="uk-modal-header">
+                            <h2 class="uk-modal-title">Posting</h2>
+                        </div>
+                        <div class="uk-modal-body uk-height-large">
+                            <textarea id="posting-contents" class="uk-textarea uk-height-1-1 uk-border-rounded" placeholder="무슨 생각을 하고 있나요?"></textarea>
+                        </div>
+                        <div class="uk-modal-footer uk-text-right">
+                            <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                            <button id="btn-new-post" class="uk-button uk-button-primary" type="button">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-navbar-right">
+            <a id="btn-logout" class="uk-button" >LOG OUT</a>
+        </div>
+    </nav>
 </div>
-<!--
-<script>
+<!--posts-->
 
-    var options = UIkit.util.$$('#js-size-switcher option').map(function (option) { return option.value; });
+<div class="uk-flex uk-flex-center uk-flex-middle uk-responsive-height">
+    <div id="post-list" class="uk-container-xlarge uk-width-xlarge" style="display: none;">
+    </div>
+</div>
 
-    UIkit.util.on('#js-size-switcher', 'change', function () {
-        var value = this.value;
-        UIkit.util.$$('.uk-table').forEach(function (table) {
-            UIkit.util.removeClass(table, options);
-            UIkit.util.addClass(table, value);
-        });
-    });
-
-</script>-->
-
-
-<!--
-
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>--><!--
-<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>-->
+<div id="scrollspy"  uk-scrollspy="target: > div; delay: 500" >
+    <div class="spinner uk-text-center" uk-spinner ></div>
+</div>
+<script type="text/postTemplate">
+<div class="div-post uk-width-1-1 uk-margin" seq="-1">
+    <div class="uk-card uk-card-default uk-card-hover">
+        <div class="uk-card-body">
+            <p class="post-attribute" name="contents"></p>
+            <span>
+                <a class="btn-like" data-uk-tooltip="title: HEART IT" class="uk-icon-link" data-uk-icon="icon:heart; ratio: 0.8"></a>
+                  <span class="post-attribute" name="likes"></span>
+                <a class="btn-comment uk-margin-small-left" data-uk-tooltip="title: Comments" class="uk-icon-link" data-uk-icon="icon:comment; ratio: 0.8"></a>
+                <span class="post-attribute"  name="comments"></span>
+            </span>
+        </div>
+        <div class="uk-card-footer">
+           <span class="uk-text-meta uk-text-right">Written by <a  class="post-attribute" name="writer"></a> on <time class="post-attribute" name="createAt" datetime="2016-04-01T19:00"></time>.</span>
+        </div>
+    </div>
+</div>
+</script>
 <!--index.js 추가-->
 <script src="/static/js/index.js"></script>
 </body>
