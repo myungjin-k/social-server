@@ -1,5 +1,7 @@
 package me.myungjin.social.service.post;
 
+import com.google.common.eventbus.EventBus;
+import me.myungjin.social.controller.event.CommentCreateEvent;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.post.Comment;
@@ -28,10 +30,13 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
+    private final EventBus eventBus;
 
-    public CommentService(PostRepository postRepository, CommentRepository commentRepository) {
+
+    public CommentService(PostRepository postRepository, CommentRepository commentRepository, EventBus eventBus) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.eventBus = eventBus;
     }
 
     @Transactional
@@ -44,7 +49,11 @@ public class CommentService {
           .map(post -> {
               post.incrementAndGetComments();
               postRepository.update(post);
-              return  save(comment);
+              Comment newComment = save(comment);
+              if(!newComment.getUserId().equals(postWriterId)){
+                  eventBus.post(new CommentCreateEvent(postId, postWriterId, userId));
+              }
+              return newComment;
           }).orElseThrow(() -> new NotFoundException(Post.class, postId, userId));
     }
 

@@ -1,11 +1,16 @@
 plugins {
 	id 'org.springframework.boot' version '2.3.1.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'com.github.johnrengelman.shadow' version '5.2.0'
 	id 'java'
 	// jar와 war
 	// https://ifuwanna.tistory.com/224
 	id 'war'
+	id 'application'
 }
+
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'me.myungjin'
 version = '0.0.1-SNAPSHOT'
@@ -16,6 +21,11 @@ repositories {
 	jcenter()
 }
 
+mainClassName = 'nl.martijndwars.webpush.cli.Cli'
+
+run {
+	classpath configurations.shadow.files
+}
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web') {
 		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
@@ -32,7 +42,7 @@ dependencies {
 	compile ('org.lazyluke:log4jdbc-remix:0.2.7')
 	compile ('com.amazonaws:aws-java-sdk-s3:1.11.805')
 	compile ('org.bouncycastle:bcprov-jdk15on:1.64')
-	compile ('nl.martijndwars:web-push:5.1.1')
+	compile ('nl.martijndwars:web-push:5.0.2')
 	compile ('org.springframework.boot:spring-boot-configuration-processor')
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
