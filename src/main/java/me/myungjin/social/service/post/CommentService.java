@@ -57,11 +57,24 @@ public class CommentService {
           }).orElseThrow(() -> new NotFoundException(Post.class, postId, userId));
     }
 
+    @Transactional
+    public Comment modify(Comment comment) {
+        update(comment);
+        return comment;
+    }
+
     @Transactional(readOnly = true)
     public List<Comment> findAll(Id<Post, Long> postId, Id<User, Long> postWriterId, Id<User, Long> userId) {
         return findPost(postId, postWriterId, userId)
           .map(post -> commentRepository.findAll(postId))
           .orElse(emptyList());
+    }
+
+    public Optional<Comment> findById(Id<Post, Long> postId, Id<User, Long> postWriterId, Id<User, Long> userId, Id<Comment, Long> commentId){
+        checkNotNull(commentId, "commentId must be provided.");
+        return findPost(postId, postWriterId, userId)
+                .map(post -> commentRepository.findById(commentId, userId))
+                .orElseThrow(() -> new NotFoundException(Post.class, postId, userId));
     }
 
     private Optional<Post> findPost(Id<Post, Long> postId, Id<User, Long> postWriterId, Id<User, Long> userId) {
@@ -71,6 +84,7 @@ public class CommentService {
 
         return postRepository.findById(postId, postWriterId, userId);
     }
+
 
     private Comment save(Comment comment) {
         return commentRepository.save(comment);

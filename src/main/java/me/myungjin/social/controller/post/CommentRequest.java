@@ -22,6 +22,10 @@ public class CommentRequest {
     return new Comment(userId, postId, writer, contents);
   }
 
+  public Comment modifyComment(Id<User, Long> userId, Id<Post, Long> postId, Writer writer) {
+    return new Comment(userId, postId, writer, contents);
+  }
+
   @Override
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)

@@ -40,6 +40,8 @@ class CommentServiceTest {
 
   private Id<User, Long> userId;
 
+  private Id<Comment, Long> commentId;
+
   @BeforeAll
   void setUp() {
     postId = Id.of(Post.class, 1L);
@@ -64,6 +66,8 @@ class CommentServiceTest {
     assertThat(comment.getSeq(), is(notNullValue()));
     assertThat(comment.getContents(), is(contents));
     log.info("Written comment: {}", comment);
+
+    commentId = Id.of(Comment.class, comment.getSeq());
   }
 
   @Test
@@ -74,4 +78,17 @@ class CommentServiceTest {
     assertThat(comments.size(), is(2));
   }
 
+  @Test
+  @Order(3)
+  void 코멘트를_수정한다() {
+
+    Comment comment = commentService.findById(postId, postWriterId, userId, commentId).orElseThrow(() -> new NotFoundException(Comment.class, postId, postWriterId, userId, commentId));
+    assertThat(comment, is(notNullValue()));
+    String contents = randomAlphabetic(40);
+    comment.modify(contents);
+    commentService.modify(comment);
+    assertThat(comment.getContents(), is(contents));
+    log.info("Modified comment: {}", comment);
+
+  }
 }

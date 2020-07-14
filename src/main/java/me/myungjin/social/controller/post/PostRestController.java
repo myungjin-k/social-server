@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static me.myungjin.social.controller.ApiResult.OK;
 
@@ -57,12 +58,12 @@ public class PostRestController {
           @AuthenticationPrincipal JwtAuthentication authentication,
           @PathVariable Long userId,
           @PathVariable Long postId,
-          @RequestParam String contents
+          @RequestBody Map<String, String> modified
   ) {
     return OK(
             postService.findById(Id.of(Post.class, postId), authentication.id, Id.of(User.class, userId))
                     .map(post -> {
-                              post.modify(contents);
+                              post.modify(modified.get("contents"));
                               postService.modify(post);
                               return post;
                     }).orElseThrow(() -> new NotFoundException(Post.class, Id.of(Post.class, postId), Id.of(User.class, userId)))
@@ -113,4 +114,21 @@ public class PostRestController {
     );
   }
 
+  @PatchMapping(path = "user/{userId}/post/{postId}/comment/{commentId}")
+  public ApiResult<Comment> modifyComments(
+          @AuthenticationPrincipal JwtAuthentication authentication,
+          @PathVariable Long userId,
+          @PathVariable Long postId,
+          @PathVariable Long commentId,
+          @RequestBody Map<String, String> modified
+  ) {
+    return OK(
+            commentService.findById(Id.of(Post.class, postId), Id.of(User.class, userId),  authentication.id, Id.of(Comment.class, commentId))
+                    .map(comment -> {
+                      comment.modify(modified.get("contents"));
+                      commentService.modify(comment);
+                      return comment;
+                    }).orElseThrow(() -> new NotFoundException(Comment.class, userId, postId, authentication.id, commentId))
+    );
+  }
 }
