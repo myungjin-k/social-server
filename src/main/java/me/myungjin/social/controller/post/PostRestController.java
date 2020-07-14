@@ -52,6 +52,23 @@ public class PostRestController {
     );
   }
 
+  @PatchMapping(path = "user/{userId}/post/{postId}")
+  public ApiResult<Post> modify(
+          @AuthenticationPrincipal JwtAuthentication authentication,
+          @PathVariable Long userId,
+          @PathVariable Long postId,
+          @RequestParam String contents
+  ) {
+    return OK(
+            postService.findById(Id.of(Post.class, postId), authentication.id, Id.of(User.class, userId))
+                    .map(post -> {
+                              post.modify(contents);
+                              postService.modify(post);
+                              return post;
+                    }).orElseThrow(() -> new NotFoundException(Post.class, Id.of(Post.class, postId), Id.of(User.class, userId)))
+    );
+  }
+
   @PatchMapping(path = "user/{userId}/post/{postId}/like")
   public ApiResult<Post> like(
     @AuthenticationPrincipal JwtAuthentication authentication,
