@@ -1,8 +1,8 @@
 package me.myungjin.social.repository.user;
 
+import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
 import me.myungjin.social.model.user.User;
-import me.myungjin.social.model.commons.Id;
 
 import java.util.List;
 import java.util.Optional;

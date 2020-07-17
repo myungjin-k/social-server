@@ -3,7 +3,9 @@ package me.myungjin.social.controller.user;
 import me.myungjin.social.controller.ApiResult;
 import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
+import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
+import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.JwtAuthentication;
 import me.myungjin.social.service.user.UserService;
@@ -77,6 +79,17 @@ public class UserRestController {
         return OK(
                 userService.findAllConnectedUser(authentication.id)
         );
+    }
+
+    @PostMapping(path = "user/connections/{targetId}")
+    public ApiResult<Connection> requestConnection(@AuthenticationPrincipal JwtAuthentication authentication,
+                                               @PathVariable Long targetId) {
+
+        return OK(
+
+                userService.addConnection(authentication.id, Id.of(User.class, targetId))
+                        .orElseThrow(() -> new DuplicateKeyException(Connection.class, authentication.id, Id.of(User.class, targetId))
+        ));
     }
 
 }

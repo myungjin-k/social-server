@@ -1,9 +1,11 @@
 package me.myungjin.social.service.user;
 
+import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.AttachedFile;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
+import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.User;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
@@ -23,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,7 +60,7 @@ class UserServiceTest {
   @Order(1)
   void 사용자를_추가한다() throws IOException {
 
-    URL testProfile = getClass().getResource("/feminist1.png");
+    URL testProfile = getClass().getResource("/test.jpg");
     File file = new File(testProfile.getFile());
     FileInputStream input = new FileInputStream(file);
     MultipartFile multipartFile =  new MockMultipartFile("file",
@@ -104,7 +107,7 @@ class UserServiceTest {
   @Test
   @Order(5)
   void 친구_목록을_가져온다() {
-    List<ConnectedUser> connected = userService.findAllConnectedUser(Id.of(User.class, 1L));
+    List<ConnectedUser> connected = userService.findAllConnectedUser(Id.of(User.class, 4L));
     assertThat(connected, is(notNullValue()));
     assertThat(connected.size(), is(1));
   }
@@ -112,17 +115,18 @@ class UserServiceTest {
   @Test
   @Order(6)
   void 친구ID_목록을_가져온다() {
-    List<Id<User, Long>> connectedIds = userService.findConnectedIds(Id.of(User.class, 1L));
+    List<Id<User, Long>> connectedIds = userService.findConnectedIds(Id.of(User.class, 4L));
     assertThat(connectedIds, is(notNullValue()));
     assertThat(connectedIds.size(), is(1));
-    assertThat(connectedIds.get(0).value(), is(2L));
+    assertThat(connectedIds.get(0).value(), is(1L));
   }
+
 
   @Test
   @Order(7)
   void 사용자_이름과_프로필을_수정한다() throws IOException {
 
-    URL testProfile = getClass().getResource("/feminist1.png");
+    URL testProfile = getClass().getResource("/test.jpg");
     File file = new File(testProfile.getFile());
     FileInputStream input = new FileInputStream(file);
     MultipartFile multipartFile =  new MockMultipartFile("file",
@@ -154,5 +158,19 @@ class UserServiceTest {
     assertThat(user, is(notNullValue()));
     user.login(new BCryptPasswordEncoder(), newPassword);
     log.info("Modified user: {}", user);
+  }
+
+
+  @Test
+  @Order(9)
+  void 친구_추가를_한다_승인은_되지_않음() {
+    Id<User, Long> userId = Id.of(User.class, 4L);
+    Id<User, Long> targetId = Id.of(User.class, 2L);
+    Connection newConnection = userService.addConnection(userId, targetId)
+            .orElseThrow(() -> new DuplicateKeyException(Connection.class, userId, targetId));
+    assertThat(newConnection, is(notNullValue()));
+    assertThat(newConnection.getUserId(), is(userId));
+    assertThat(newConnection.getTargetId(), is(targetId));
+    log.info("Requested connection: {}", newConnection);
   }
 }

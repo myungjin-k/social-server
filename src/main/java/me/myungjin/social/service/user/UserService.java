@@ -6,7 +6,9 @@ import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.AttachedFile;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
+import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.User;
+import me.myungjin.social.repository.user.ConnectionRepository;
 import me.myungjin.social.repository.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 @Service
@@ -31,11 +34,14 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final ConnectionRepository connectionRepository;
 
-    public UserService(S3Client s3Client, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+
+    public UserService(S3Client s3Client, PasswordEncoder passwordEncoder, UserRepository userRepository, ConnectionRepository connectionRepository) {
         this.s3Client = s3Client;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.connectionRepository = connectionRepository;
     }
 
     public List<User> findAllUsers() {
@@ -137,6 +143,19 @@ public class UserService {
         checkNotNull(userId, "userId must be provided.");
 
         return userRepository.findConnectedIds(userId);
+    }
+
+    @Transactional
+    public Optional<Connection> addConnection(Id<User, Long> userId, Id<User, Long> targetId) {
+        checkNotNull(userId, "userId must be provided.");
+        checkNotNull(targetId, "targetId must be provided.");
+
+        return connectionRepository.existsById(userId, targetId) ?
+                empty() : ofNullable(saveConnection(new Connection(userId, targetId)));
+    }
+
+    private Connection saveConnection(Connection connection) {
+        return connectionRepository.save(connection);
     }
 
     private User save(User user) {
