@@ -1,13 +1,14 @@
 package me.myungjin.social.service.user;
 
+import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.AttachedFile;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
+import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.User;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +57,7 @@ class UserServiceTest {
   @Order(1)
   void 사용자를_추가한다() throws IOException {
 
-    URL testProfile = getClass().getResource("/feminist1.png");
+    URL testProfile = getClass().getResource("/test.jpg");
     File file = new File(testProfile.getFile());
     FileInputStream input = new FileInputStream(file);
     MultipartFile multipartFile =  new MockMultipartFile("file",
@@ -104,7 +104,7 @@ class UserServiceTest {
   @Test
   @Order(5)
   void 친구_목록을_가져온다() {
-    List<ConnectedUser> connected = userService.findAllConnectedUser(Id.of(User.class, 1L));
+    List<ConnectedUser> connected = userService.findAllConnectedUser(Id.of(User.class, 4L));
     assertThat(connected, is(notNullValue()));
     assertThat(connected.size(), is(1));
   }
@@ -112,17 +112,18 @@ class UserServiceTest {
   @Test
   @Order(6)
   void 친구ID_목록을_가져온다() {
-    List<Id<User, Long>> connectedIds = userService.findConnectedIds(Id.of(User.class, 1L));
+    List<Id<User, Long>> connectedIds = userService.findConnectedIds(Id.of(User.class, 4L));
     assertThat(connectedIds, is(notNullValue()));
     assertThat(connectedIds.size(), is(1));
-    assertThat(connectedIds.get(0).value(), is(2L));
+    assertThat(connectedIds.get(0).value(), is(1L));
   }
+
 
   @Test
   @Order(7)
   void 사용자_이름과_프로필을_수정한다() throws IOException {
 
-    URL testProfile = getClass().getResource("/feminist1.png");
+    URL testProfile = getClass().getResource("/test.jpg");
     File file = new File(testProfile.getFile());
     FileInputStream input = new FileInputStream(file);
     MultipartFile multipartFile =  new MockMultipartFile("file",
@@ -155,4 +156,5 @@ class UserServiceTest {
     user.login(new BCryptPasswordEncoder(), newPassword);
     log.info("Modified user: {}", user);
   }
+
 }

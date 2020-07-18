@@ -57,10 +57,10 @@ public class JdbcCommentRepository implements CommentRepository {
     }
 
     @Override
-    public Optional<Comment> findById(Id<Comment, Long> commentId) {
+    public Optional<Comment> findById(Id<Comment, Long> commentId, Id<User, Long> commentWriterId) {
         List<Comment> results = jdbcTemplate.query(
-          "SELECT c.*,u.email,u.name FROM comments c JOIN users u ON c.user_seq=u.seq WHERE c.seq=?",
-          new Object[]{commentId.value()},
+          "SELECT c.*,u.email,u.name FROM comments c JOIN users u ON c.user_seq=u.seq AND c.user_seq = ? WHERE c.seq=?",
+          new Object[]{commentWriterId.value(), commentId.value()},
           mapper
         );
         return ofNullable(results.isEmpty() ? null : results.get(0));

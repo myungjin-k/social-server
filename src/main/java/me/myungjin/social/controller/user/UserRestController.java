@@ -3,9 +3,13 @@ package me.myungjin.social.controller.user;
 import me.myungjin.social.controller.ApiResult;
 import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
+import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
+import me.myungjin.social.model.user.Connection;
+import me.myungjin.social.model.user.From;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.JwtAuthentication;
+import me.myungjin.social.service.user.ConnectionService;
 import me.myungjin.social.service.user.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,8 +28,11 @@ public class UserRestController {
 
     private final UserService userService;
 
-    public UserRestController(UserService userService) {
+    private final ConnectionService connectionService;
+
+    public UserRestController(UserService userService, ConnectionService connectionService) {
         this.userService = userService;
+        this.connectionService = connectionService;
     }
 
     @GetMapping(path = "users")
@@ -77,6 +84,21 @@ public class UserRestController {
         return OK(
                 userService.findAllConnectedUser(authentication.id)
         );
+    }
+
+    @PostMapping(path = "user/connections/{targetId}")
+    public ApiResult<Connection> requestConnection(@AuthenticationPrincipal JwtAuthentication authentication,
+                                               @PathVariable Long targetId) {
+        return OK(
+                connectionService.addConnection(authentication.id, Id.of(User.class, targetId), new From(authentication.email, authentication.name))
+                        .orElse(null)
+        );
+    }
+
+
+    @GetMapping(path = "user/connections/grant")
+    public ApiResult<List<Connection>> ungrantedConnections(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return OK(connectionService.findUngrantedConnections(authentication.id));
     }
 
 }

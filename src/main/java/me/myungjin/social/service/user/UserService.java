@@ -31,7 +31,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-
     public UserService(S3Client s3Client, PasswordEncoder passwordEncoder, UserRepository userRepository) {
         this.s3Client = s3Client;
         this.passwordEncoder = passwordEncoder;

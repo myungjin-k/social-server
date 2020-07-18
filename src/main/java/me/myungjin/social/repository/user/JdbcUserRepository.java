@@ -1,6 +1,7 @@
 package me.myungjin.social.repository.user;
 
 import me.myungjin.social.model.user.ConnectedUser;
+import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.model.commons.Id;
@@ -107,6 +108,7 @@ public class JdbcUserRepository implements UserRepository{
                 (rs, rowNum) -> Id.of(User.class, rs.getLong("target_seq"))
         );
     }
+
 
     static RowMapper<User> mapper = (rs, rowNum) -> new User.Builder()
             .seq(rs.getLong("seq"))
