@@ -6,6 +6,7 @@ import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
 import me.myungjin.social.model.user.Connection;
+import me.myungjin.social.model.user.From;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.JwtAuthentication;
 import me.myungjin.social.service.user.ConnectionService;
@@ -89,7 +90,7 @@ public class UserRestController {
     public ApiResult<Connection> requestConnection(@AuthenticationPrincipal JwtAuthentication authentication,
                                                @PathVariable Long targetId) {
         return OK(
-                connectionService.addConnection(authentication.id, Id.of(User.class, targetId))
+                connectionService.addConnection(authentication.id, Id.of(User.class, targetId), new From(authentication.email, authentication.name))
                         .orElse(null)
         );
     }

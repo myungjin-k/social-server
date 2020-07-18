@@ -27,11 +27,13 @@ public class Connection {
 
     private final LocalDateTime createAt;
 
-    public Connection(Id<User, Long> userId, Id<User, Long> targetId){
-        this(null, userId, targetId, null, null);
+    private final From from;
+
+    public Connection(Id<User, Long> userId, Id<User, Long> targetId, From from){
+        this(null, userId, targetId, null, null, from);
     }
 
-    public Connection(Long seq, Id<User, Long> userId, Id<User, Long> targetId, LocalDateTime grantedAt, LocalDateTime createAt) {
+    public Connection(Long seq, Id<User, Long> userId, Id<User, Long> targetId, LocalDateTime grantedAt, LocalDateTime createAt, From from) {
         checkNotNull(userId, "userId must be provided.");
         checkNotNull(targetId, "targetId must be provided.");
 
@@ -40,6 +42,7 @@ public class Connection {
         this.targetId = targetId;
         this.grantedAt = grantedAt;
         this.createAt = defaultIfNull(createAt, now());
+        this.from = from;
     }
 
     public Long getSeq() {
@@ -62,6 +65,10 @@ public class Connection {
         return createAt;
     }
 
+    public From getFrom() {
+        return from;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
@@ -70,6 +77,7 @@ public class Connection {
                 .append("targetId", targetId)
                 .append("grantedAt", grantedAt)
                 .append("createAt", createAt)
+                .append("from", from)
                 .toString();
     }
 
@@ -80,6 +88,7 @@ public class Connection {
         private Id<User, Long> targetId;
         private LocalDateTime grantedAt;
         private LocalDateTime createAt;
+        private From from;
 
 
         public Builder() {
@@ -91,6 +100,7 @@ public class Connection {
             this.targetId = connection.targetId;
             this.grantedAt = connection.grantedAt;
             this.createAt = connection.createAt;
+            this.from = connection.from;
         }
 
         public Builder seq(Long seq){
@@ -118,8 +128,13 @@ public class Connection {
             return this;
         }
 
+        public Builder from(From from){
+            this.from = from;
+            return this;
+        }
+
         public Connection build() {
-            return new Connection(seq, userId, targetId, grantedAt, createAt);
+            return new Connection(seq, userId, targetId, grantedAt, createAt, from);
         }
     }
 }

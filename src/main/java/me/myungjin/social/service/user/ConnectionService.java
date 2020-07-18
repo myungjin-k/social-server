@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import me.myungjin.social.controller.event.ConnectionRequestEvent;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.Connection;
+import me.myungjin.social.model.user.From;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.repository.user.ConnectionRepository;
 import me.myungjin.social.repository.user.UserRepository;
@@ -32,13 +33,13 @@ public class ConnectionService {
     }
 
     @Transactional
-    public Optional<Connection> addConnection(Id<User, Long> userId, Id<User, Long> targetId) {
+    public Optional<Connection> addConnection(Id<User, Long> userId, Id<User, Long> targetId, From from) {
         checkNotNull(userId, "userId must be provided.");
         checkNotNull(targetId, "targetId must be provided.");
 
         return findUser(targetId).map( user -> {
             if(!connectionRepository.existsById(userId, targetId)){
-                Connection newConnection = saveConnection(new Connection(userId, targetId));
+                Connection newConnection = saveConnection(new Connection(userId, targetId, from));
                 eventBus.post(new ConnectionRequestEvent(userId, targetId));
                 return newConnection;
             }

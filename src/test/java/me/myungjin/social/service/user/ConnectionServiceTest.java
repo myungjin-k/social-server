@@ -1,8 +1,8 @@
 package me.myungjin.social.service.user;
 
-import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.Connection;
+import me.myungjin.social.model.user.From;
 import me.myungjin.social.model.user.User;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -44,10 +44,12 @@ class ConnectionServiceTest {
   void 친구_추가_요청을_한다_승인은_되지_않음() {
     Id<User, Long> userId = Id.of(User.class, 4L);
     Id<User, Long> targetId = Id.of(User.class, 2L);
-    Connection newConnection = connectionService.addConnection(userId, targetId).orElse(null);
+    From from = new From("mjkim@gmail.com", "mjkim");
+    Connection newConnection = connectionService.addConnection(userId, targetId, from).orElse(null);
     assertThat(newConnection, is(notNullValue()));
     assertThat(newConnection.getUserId(), is(userId));
     assertThat(newConnection.getTargetId(), is(targetId));
+    assertThat(newConnection.getFrom(), is(from));
     log.info("Requested connection: {}", newConnection);
   }
 
