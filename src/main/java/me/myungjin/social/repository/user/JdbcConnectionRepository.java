@@ -1,9 +1,7 @@
 package me.myungjin.social.repository.user;
 
 import me.myungjin.social.model.commons.Id;
-import me.myungjin.social.model.user.ConnectedUser;
 import me.myungjin.social.model.user.Connection;
-import me.myungjin.social.model.user.Role;
 import me.myungjin.social.model.user.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -56,4 +54,16 @@ public class JdbcConnectionRepository implements ConnectionRepository{
                 .build();
     }
 
+    @Override
+    public List<Connection> findUngrantedConnectionsById(Id<User, Long> targetId) {
+        return jdbcTemplate.query("select * from connections where target_seq = ? and granted_at is null order by seq desc", new Object[]{targetId.value()}, mapper);
+    }
+
+    static RowMapper<Connection> mapper = (rs, rowNum) -> new Connection.Builder()
+            .seq(rs.getLong("seq"))
+            .userId(Id.of(User.class, rs.getLong("user_seq")))
+            .targetId(Id.of(User.class, rs.getLong("target_seq")))
+            .grantedAt(dateTimeOf(rs.getTimestamp("granted_at")))
+            .createAt(dateTimeOf(rs.getTimestamp("create_at")))
+            .build();
 }

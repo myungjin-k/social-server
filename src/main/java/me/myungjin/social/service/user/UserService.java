@@ -154,6 +154,13 @@ public class UserService {
                 empty() : ofNullable(saveConnection(new Connection(userId, targetId)));
     }
 
+    @Transactional(readOnly = true)
+    public List<Connection> findUngrantedConnections(Id<User, Long> targetId) {
+        checkNotNull(targetId, "targetId must be provided.");
+
+        return connectionRepository.findUngrantedConnectionsById(targetId);
+    }
+
     private Connection saveConnection(Connection connection) {
         return connectionRepository.save(connection);
     }

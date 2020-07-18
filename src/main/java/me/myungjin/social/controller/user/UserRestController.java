@@ -84,12 +84,17 @@ public class UserRestController {
     @PostMapping(path = "user/connections/{targetId}")
     public ApiResult<Connection> requestConnection(@AuthenticationPrincipal JwtAuthentication authentication,
                                                @PathVariable Long targetId) {
-
         return OK(
 
                 userService.addConnection(authentication.id, Id.of(User.class, targetId))
                         .orElseThrow(() -> new DuplicateKeyException(Connection.class, authentication.id, Id.of(User.class, targetId))
         ));
+    }
+
+
+    @GetMapping(path = "user/connections/ungranted/list")
+    public ApiResult<List<Connection>> ungrantedConnections(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return OK(userService.findUngrantedConnections(authentication.id));
     }
 
 }

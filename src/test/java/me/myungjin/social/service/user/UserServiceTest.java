@@ -9,7 +9,6 @@ import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.User;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -172,5 +169,18 @@ class UserServiceTest {
     assertThat(newConnection.getUserId(), is(userId));
     assertThat(newConnection.getTargetId(), is(targetId));
     log.info("Requested connection: {}", newConnection);
+  }
+
+
+  @Test
+  @Order(10)
+  void 승인하지_않은_친구_리스트를_가져온다() {
+    Id<User, Long> userId = Id.of(User.class, 4L);
+    Id<User, Long> targetId = Id.of(User.class, 2L);
+    List<Connection> resultList = userService.findUngrantedConnections(targetId);
+    assertThat(resultList, is(notNullValue()));
+    assertThat(resultList.size(), is(1));
+    assertThat(resultList.get(0).getTargetId(), is(targetId));
+    assertThat(resultList.get(0).getUserId(), is(userId));
   }
 }
