@@ -157,30 +157,4 @@ class UserServiceTest {
     log.info("Modified user: {}", user);
   }
 
-
-  @Test
-  @Order(9)
-  void 친구_추가를_한다_승인은_되지_않음() {
-    Id<User, Long> userId = Id.of(User.class, 4L);
-    Id<User, Long> targetId = Id.of(User.class, 2L);
-    Connection newConnection = userService.addConnection(userId, targetId)
-            .orElseThrow(() -> new DuplicateKeyException(Connection.class, userId, targetId));
-    assertThat(newConnection, is(notNullValue()));
-    assertThat(newConnection.getUserId(), is(userId));
-    assertThat(newConnection.getTargetId(), is(targetId));
-    log.info("Requested connection: {}", newConnection);
-  }
-
-
-  @Test
-  @Order(10)
-  void 승인하지_않은_친구_리스트를_가져온다() {
-    Id<User, Long> userId = Id.of(User.class, 4L);
-    Id<User, Long> targetId = Id.of(User.class, 2L);
-    List<Connection> resultList = userService.findUngrantedConnections(targetId);
-    assertThat(resultList, is(notNullValue()));
-    assertThat(resultList.size(), is(1));
-    assertThat(resultList.get(0).getTargetId(), is(targetId));
-    assertThat(resultList.get(0).getUserId(), is(userId));
-  }
 }

@@ -47,7 +47,6 @@ public class CommentCreateEventListener implements AutoCloseable {
                             "user/" + postWriterId.value() + "/post/" + postId.value() + "/comment",
                             "Please check new comment"
                     ));
-            throw new IllegalArgumentException("test");
         } catch (Exception e) {
             log.error("Got error while handling event CommentCreateEvent " + event.toString(), e);
             //e.printStackTrace();

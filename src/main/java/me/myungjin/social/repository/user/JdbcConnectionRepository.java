@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
 import static me.myungjin.social.util.DateTimeUtils.dateTimeOf;
 import static me.myungjin.social.util.DateTimeUtils.timestampOf;
 
@@ -25,8 +26,15 @@ public class JdbcConnectionRepository implements ConnectionRepository{
     }
 
     @Override
+    public Optional<Connection> findById(Id<User, Long> userId, Id<User, Long> targetId) {
+        List<Connection> results = jdbcTemplate.query("select * from connections where user_seq = ? and target_seq = ? order by seq desc",
+                new Object[]{userId.value(), targetId.value()}, mapper);
+        return ofNullable(results.isEmpty() ? null : results.get(0));
+    }
+
+    @Override
     public boolean existsById(Id<User, Long> userId, Id<User, Long> targetId) {
-        Optional<Integer> result = Optional.ofNullable(
+        Optional<Integer> result = ofNullable(
                 jdbcTemplate.queryForObject("SELECT COUNT(*) AS CNT FROM CONNECTIONS T WHERE T.USER_SEQ = ? AND T.TARGET_SEQ = ?"
                         , new Object[]{userId.value(), targetId.value()}
                         , (resultSet, rowNum) -> resultSet.getInt("cnt")

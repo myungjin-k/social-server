@@ -8,6 +8,7 @@ import me.myungjin.social.model.user.ConnectedUser;
 import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.JwtAuthentication;
+import me.myungjin.social.service.user.ConnectionService;
 import me.myungjin.social.service.user.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,8 +27,11 @@ public class UserRestController {
 
     private final UserService userService;
 
-    public UserRestController(UserService userService) {
+    private final ConnectionService connectionService;
+
+    public UserRestController(UserService userService, ConnectionService connectionService) {
         this.userService = userService;
+        this.connectionService = connectionService;
     }
 
     @GetMapping(path = "users")
@@ -85,16 +89,15 @@ public class UserRestController {
     public ApiResult<Connection> requestConnection(@AuthenticationPrincipal JwtAuthentication authentication,
                                                @PathVariable Long targetId) {
         return OK(
-
-                userService.addConnection(authentication.id, Id.of(User.class, targetId))
-                        .orElseThrow(() -> new DuplicateKeyException(Connection.class, authentication.id, Id.of(User.class, targetId))
-        ));
+                connectionService.addConnection(authentication.id, Id.of(User.class, targetId))
+                        .orElse(null)
+        );
     }
 
 
-    @GetMapping(path = "user/connections/ungranted/list")
+    @GetMapping(path = "user/connections/grant")
     public ApiResult<List<Connection>> ungrantedConnections(@AuthenticationPrincipal JwtAuthentication authentication) {
-        return OK(userService.findUngrantedConnections(authentication.id));
+        return OK(connectionService.findUngrantedConnections(authentication.id));
     }
 
 }
