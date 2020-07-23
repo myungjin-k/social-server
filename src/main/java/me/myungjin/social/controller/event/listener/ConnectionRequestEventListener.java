@@ -32,7 +32,7 @@ public class ConnectionRequestEventListener implements AutoCloseable {
     }
 
     @Subscribe
-    public void handleCommentCreateEvent(ConnectionRequestEvent event) throws Exception {
+    public void handleConnectionRequestEvent(ConnectionRequestEvent event) throws Exception {
         Id<User, Long> requestedUserId = event.getRequestedUserId();
         Id<User, Long> targetId = event.getTargetId();
         Connection connection = connectionService.findById(requestedUserId, targetId)

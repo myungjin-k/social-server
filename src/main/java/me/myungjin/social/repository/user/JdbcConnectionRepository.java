@@ -28,7 +28,7 @@ public class JdbcConnectionRepository implements ConnectionRepository{
 
     @Override
     public Optional<Connection> findById(Id<User, Long> userId, Id<User, Long> targetId) {
-        List<Connection> results = jdbcTemplate.query("select * from connections where user_seq = ? and target_seq = ? order by seq desc",
+        List<Connection> results = jdbcTemplate.query("select c.*, u.NAME, u.EMAIL from connections c JOIN users u ON c.user_seq=u.seq where c.user_seq = ? and c.target_seq = ? order by c.seq desc",
                 new Object[]{userId.value(), targetId.value()}, mapper);
         return ofNullable(results.isEmpty() ? null : results.get(0));
     }
