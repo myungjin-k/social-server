@@ -61,7 +61,6 @@ class ConnectionServiceTest {
     log.info("Requested connection: {}", newConnection);
   }
 
-
   @Test
   @Order(2)
   void 승인하지_않은_친구_리스트를_가져온다() {
@@ -70,5 +69,15 @@ class ConnectionServiceTest {
     assertThat(resultList.size(), is(1));
     assertThat(resultList.get(0).getTargetId(), is(targetId));
     assertThat(resultList.get(0).getUserId(), is(userId));
+  }
+
+  @Test
+  @Order(3)
+  void 친구요청을_수락한다() {
+    Connection granted = connectionService.grant(userId, targetId);
+
+    assertThat(granted, is(notNullValue()));
+    assertThat(granted.getGrantedAt(), is(notNullValue()));
+    log.info("Granted connection: {}", granted);
   }
 }

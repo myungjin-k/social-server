@@ -2,6 +2,7 @@ package me.myungjin.social.service.user;
 
 import com.google.common.eventbus.EventBus;
 import me.myungjin.social.controller.event.ConnectionRequestEvent;
+import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.From;
@@ -47,6 +48,15 @@ public class ConnectionService {
         });
     }
 
+    @Transactional
+    public Connection grant(Id<User, Long> userId, Id<User, Long> targetId){
+        return findById(userId, targetId).map(connection -> {
+            connection.grant();
+            connectionRepository.grant(connection);
+            return connection;
+        }).orElseThrow(() -> new NotFoundException(Connection.class, userId, targetId));
+    }
+
     @Transactional(readOnly = true)
     public List<Connection> findUngrantedConnections(Id<User, Long> targetId) {
         checkNotNull(targetId, "targetId must be provided.");
@@ -61,6 +71,7 @@ public class ConnectionService {
 
         return connectionRepository.findById(userId, targetId);
     }
+
 
     private Optional<User> findUser(Id<User, Long> targetId) {
         checkNotNull(targetId, "targetId must be provided.");

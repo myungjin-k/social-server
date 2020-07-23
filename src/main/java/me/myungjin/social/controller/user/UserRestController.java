@@ -101,4 +101,10 @@ public class UserRestController {
         return OK(connectionService.findUngrantedConnections(authentication.id));
     }
 
+    @PatchMapping(path = "user/connections/grant/{userId}")
+    public ApiResult<Connection> grant(@AuthenticationPrincipal JwtAuthentication authentication,
+                                       @PathVariable Long userId){
+        return OK(connectionService.grant(Id.of(User.class, userId), authentication.id));
+    }
+
 }

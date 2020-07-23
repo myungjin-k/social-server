@@ -69,6 +69,10 @@ public class Connection {
         return from;
     }
 
+    public void grant(){
+        grantedAt = now();
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)

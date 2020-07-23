@@ -17,4 +17,5 @@ public interface ConnectionRepository {
 
     List<Connection> findUngrantedConnectionsById(Id<User, Long> targetId);
 
+    void grant(Connection connection);
 }

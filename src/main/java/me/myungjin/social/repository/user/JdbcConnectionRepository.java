@@ -69,6 +69,17 @@ public class JdbcConnectionRepository implements ConnectionRepository{
                 new Object[]{targetId.value()}, mapper);
     }
 
+
+    @Override
+    public void grant(Connection connection) {
+        jdbcTemplate.update(
+                "UPDATE connections SET granted_at=? WHERE seq=?",
+                timestampOf(connection.getGrantedAt().orElse(null)),
+                connection.getSeq()
+        );
+    }
+
+
     static RowMapper<Connection> mapper = (rs, rowNum) -> new Connection.Builder()
             .seq(rs.getLong("seq"))
             .userId(Id.of(User.class, rs.getLong("user_seq")))
