@@ -4,6 +4,7 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import me.myungjin.social.controller.event.EventExceptionHandler;
 import me.myungjin.social.controller.event.listener.CommentCreateEventListener;
+import me.myungjin.social.controller.event.listener.ConnectionGrantEventListener;
 import me.myungjin.social.controller.event.listener.ConnectionRequestEventListener;
 import me.myungjin.social.controller.event.listener.JoinEventListener;
 import me.myungjin.social.service.notification.NotificationService;
@@ -85,4 +86,9 @@ public class EventConfigure {
     return new ConnectionRequestEventListener(eventBus, notificationService, connectionService);
   }
 
+  @Bean(destroyMethod = "close")
+  public ConnectionGrantEventListener connectionGrantEventListener(
+          EventBus eventBus, NotificationService notificationService, ConnectionService connectionService) {
+    return new ConnectionGrantEventListener(eventBus, notificationService, connectionService);
+  }
 }

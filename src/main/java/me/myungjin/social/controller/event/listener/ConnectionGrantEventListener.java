@@ -2,6 +2,7 @@ package me.myungjin.social.controller.event.listener;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import me.myungjin.social.controller.event.ConnectionGrantEvent;
 import me.myungjin.social.controller.event.ConnectionRequestEvent;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.error.NotNotifiedException;
@@ -14,9 +15,9 @@ import me.myungjin.social.service.user.ConnectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionRequestEventListener implements AutoCloseable {
+public class ConnectionGrantEventListener implements AutoCloseable {
 
-    private Logger log = LoggerFactory.getLogger(ConnectionRequestEventListener.class);
+    private Logger log = LoggerFactory.getLogger(ConnectionGrantEventListener.class);
 
     private EventBus eventBus;
 
@@ -24,7 +25,7 @@ public class ConnectionRequestEventListener implements AutoCloseable {
 
     private final ConnectionService connectionService;
 
-    public ConnectionRequestEventListener(EventBus eventBus, NotificationService notificationService, ConnectionService connectionService) {
+    public ConnectionGrantEventListener(EventBus eventBus, NotificationService notificationService, ConnectionService connectionService) {
         this.eventBus = eventBus;
         this.notificationService = notificationService;
         eventBus.register(this);
@@ -32,24 +33,24 @@ public class ConnectionRequestEventListener implements AutoCloseable {
     }
 
     @Subscribe
-    public void handleConnectionRequestEvent(ConnectionRequestEvent event) throws Exception {
+    public void handleConnectionGrantEvent(ConnectionRequestEvent event) throws Exception {
         Id<User, Long> requestedUserId = event.getRequestedUserId();
         Id<User, Long> targetId = event.getTargetId();
         Connection connection = connectionService.findById(requestedUserId, targetId)
                 .orElseThrow(() -> new NotFoundException(Connection.class, event));
-        log.info("{} requested a new connection of {} !", requestedUserId, targetId);
+        log.info("{} granted a requested connection of {} !", targetId, requestedUserId);
 
         try {
             log.info("Try to send push for {}", event);
-            notificationService.notifyUser(targetId,
+            notificationService.notifyUser(requestedUserId,
                     new PushMessage(
-                            "new connection request!",
-                            "user/connections/grant",
-                            "Please check new connection request"
+                            "connection granted!",
+                            "user/" + targetId.value() + "/post/list",
+                            "You can check new friend's posts"
                     ));
         } catch (Exception e) {
-            log.error("Got error while handling event ConnectionRequestEvent " + event.toString(), e);
-            throw new NotNotifiedException(ConnectionRequestEvent.class, e.getMessage(), event);
+            log.error("Got error while handling event ConnectionGrantEvent " + event.toString(), e);
+            throw new NotNotifiedException(ConnectionGrantEvent.class, e.getMessage(), event);
         }
     }
 

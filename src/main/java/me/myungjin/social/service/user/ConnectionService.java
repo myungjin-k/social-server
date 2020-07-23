@@ -1,6 +1,7 @@
 package me.myungjin.social.service.user;
 
 import com.google.common.eventbus.EventBus;
+import me.myungjin.social.controller.event.ConnectionGrantEvent;
 import me.myungjin.social.controller.event.ConnectionRequestEvent;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.Id;
@@ -53,6 +54,7 @@ public class ConnectionService {
         return findById(userId, targetId).map(connection -> {
             connection.grant();
             connectionRepository.grant(connection);
+            eventBus.post(new ConnectionGrantEvent(userId, targetId));
             return connection;
         }).orElseThrow(() -> new NotFoundException(Connection.class, userId, targetId));
     }
