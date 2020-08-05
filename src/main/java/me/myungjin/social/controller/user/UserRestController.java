@@ -90,11 +90,16 @@ public class UserRestController {
     public ApiResult<Connection> requestConnection(@AuthenticationPrincipal JwtAuthentication authentication,
                                                @PathVariable Long targetId) {
         return OK(
-                connectionService.addConnection(authentication.id, Id.of(User.class, targetId), new From(authentication.email, authentication.name))
+                connectionService.add(authentication.id, Id.of(User.class, targetId), new From(authentication.email, authentication.name))
                         .orElse(null)
         );
     }
-
+ // 구독 취소와 같은 개념?
+    @DeleteMapping(path = "user/connections/{targetId}")
+    public ApiResult<Connection> quitConnection(@AuthenticationPrincipal JwtAuthentication authentication,
+                                                @PathVariable Long targetId){
+        return OK(connectionService.quit(authentication.id, Id.of(User.class, targetId)));
+    }
 
     @GetMapping(path = "user/connections/grant")
     public ApiResult<List<Connection>> ungrantedConnections(@AuthenticationPrincipal JwtAuthentication authentication) {

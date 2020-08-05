@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -53,7 +54,7 @@ class ConnectionServiceTest {
   @Order(1)
   void 친구_추가_요청을_한다_승인은_되지_않음() {
     From from = new From("mjkim@gmail.com", "mjkim");
-    Connection newConnection = connectionService.addConnection(userId, targetId, from).orElse(null);
+    Connection newConnection = connectionService.add(userId, targetId, from).orElse(null);
     assertThat(newConnection, is(notNullValue()));
     assertThat(newConnection.getUserId(), is(userId));
     assertThat(newConnection.getTargetId(), is(targetId));
@@ -80,4 +81,16 @@ class ConnectionServiceTest {
     assertThat(granted.getGrantedAt(), is(notNullValue()));
     log.info("Granted connection: {}", granted);
   }
+
+  @Test
+  @Order(4)
+  void 친구구독을_취소한다() {
+    Connection quited = connectionService.quit(userId, targetId);
+    assertThat(quited, is(notNullValue()));
+
+    Optional<Connection> check = connectionService.findById(userId, targetId);
+    assertThat(check.isPresent(), is(false));
+    log.info("Quited connection: {}", quited);
+  }
+
 }

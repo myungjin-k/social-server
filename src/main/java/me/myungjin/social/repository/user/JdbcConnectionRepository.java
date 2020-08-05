@@ -79,6 +79,15 @@ public class JdbcConnectionRepository implements ConnectionRepository{
         );
     }
 
+    @Override
+    public Connection delete(Connection connection) {
+        jdbcTemplate.update(
+                "DELETE FROM connections WHERE seq=?",
+                connection.getSeq()
+        );
+        return connection;
+    }
+
 
     static RowMapper<Connection> mapper = (rs, rowNum) -> new Connection.Builder()
             .seq(rs.getLong("seq"))

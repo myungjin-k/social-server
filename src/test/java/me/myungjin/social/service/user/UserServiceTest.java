@@ -107,6 +107,12 @@ class UserServiceTest {
     List<ConnectedUser> connected = userService.findAllConnectedUser(Id.of(User.class, 4L));
     assertThat(connected, is(notNullValue()));
     assertThat(connected.size(), is(1));
+    assertThat(connected.get(0).getSeq(), is(1L));
+    log.info("First connected User Info: {}", connected.get(0));
+
+    // 친구 구독은 단방향
+    connected = userService.findAllConnectedUser(Id.of(User.class, 1L));
+    assertThat(connected.isEmpty(), is(true));
   }
 
   @Test

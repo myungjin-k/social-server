@@ -14,7 +14,7 @@ INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALU
 INSERT INTO comments(seq,user_seq,post_seq,contents,create_at) VALUES (null,1,1,'first comment','2019-03-01 13:15:00');
 INSERT INTO comments(seq,user_seq,post_seq,contents,create_at) VALUES (null,2,4,'first comment','2019-03-01 13:15:00');
 
-INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,1,2,'2019-03-31 13:00:00','2019-03-31 00:10:00');
+//INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,1,2,'2019-03-31 13:00:00','2019-03-31 00:10:00');
 INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,2,1,'2019-03-31 13:00:00','2019-03-31 00:10:00');
 INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,4,1,'2019-03-31 13:00:00','2019-03-31 00:10:00');
-INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,1,4,'2019-03-31 13:00:00','2019-03-31 00:10:00');
+//INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,1,4,'2019-03-31 13:00:00','2019-03-31 00:10:00');

@@ -35,13 +35,13 @@ public class ConnectionService {
     }
 
     @Transactional
-    public Optional<Connection> addConnection(Id<User, Long> userId, Id<User, Long> targetId, From from) {
+    public Optional<Connection> add(Id<User, Long> userId, Id<User, Long> targetId, From from) {
         checkNotNull(userId, "userId must be provided.");
         checkNotNull(targetId, "targetId must be provided.");
 
         return findUser(targetId).map( user -> {
             if(!connectionRepository.existsById(userId, targetId)){
-                Connection newConnection = saveConnection(new Connection(userId, targetId, from));
+                Connection newConnection = save(new Connection(userId, targetId, from));
                 eventBus.post(new ConnectionRequestEvent(userId, targetId));
                 return newConnection;
             }
@@ -55,6 +55,14 @@ public class ConnectionService {
             connection.grant();
             connectionRepository.grant(connection);
             eventBus.post(new ConnectionGrantEvent(userId, targetId));
+            return connection;
+        }).orElseThrow(() -> new NotFoundException(Connection.class, userId, targetId));
+    }
+
+    @Transactional
+    public Connection quit(Id<User, Long> userId, Id<User, Long> targetId){
+        return findById(userId, targetId).map(connection -> {
+            connectionRepository.delete(connection);
             return connection;
         }).orElseThrow(() -> new NotFoundException(Connection.class, userId, targetId));
     }
@@ -81,8 +89,12 @@ public class ConnectionService {
         return userRepository.findById(targetId);
     }
 
-    private Connection saveConnection(Connection connection) {
+    private Connection save(Connection connection) {
         return connectionRepository.save(connection);
+    }
+
+    private Connection delete(Connection connection){
+        return connectionRepository.delete(connection);
     }
 
 }
