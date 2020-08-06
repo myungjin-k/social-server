@@ -131,4 +131,16 @@ public class PostRestController {
                     }).orElseThrow(() -> new NotFoundException(Comment.class, userId, postId, authentication.id, commentId))
     );
   }
+
+  @DeleteMapping(path = "user/{userId}/post/{postId}/comment/{commentId}")
+  public ApiResult<Comment> deleteComment(
+          @AuthenticationPrincipal JwtAuthentication authentication,
+          @PathVariable Long userId,
+          @PathVariable Long postId,
+          @PathVariable Long commentId
+  ) {
+    return OK(
+            commentService.remove(Id.of(Post.class, postId), Id.of(User.class, userId), authentication.id, Id.of(Comment.class, commentId))
+    );
+  }
 }

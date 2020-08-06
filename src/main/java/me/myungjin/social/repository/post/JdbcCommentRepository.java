@@ -57,6 +57,14 @@ public class JdbcCommentRepository implements CommentRepository {
     }
 
     @Override
+    public void delete(Id<Comment, Long> commentId) {
+        jdbcTemplate.update(
+                "DELETE FROM comments WHERE seq = ?",
+                commentId.value()
+        );
+    }
+
+    @Override
     public Optional<Comment> findById(Id<Comment, Long> commentId, Id<User, Long> commentWriterId) {
         List<Comment> results = jdbcTemplate.query(
           "SELECT c.*,u.email,u.name FROM comments c JOIN users u ON c.user_seq=u.seq AND c.user_seq = ? WHERE c.seq=?",

@@ -63,6 +63,15 @@ public class CommentService {
         return comment;
     }
 
+    @Transactional
+    public Comment remove(Id<Post, Long> postId, Id<User, Long> postWriterId, Id<User, Long> userId, Id<Comment, Long> commentId){
+        return findById(postId, postWriterId, userId, commentId)
+                .map(comment -> {
+                    delete(commentId);
+                    return comment;
+                }).orElseThrow(() -> new NotFoundException(Comment.class, commentId));
+    }
+
     @Transactional(readOnly = true)
     public List<Comment> findAll(Id<Post, Long> postId, Id<User, Long> postWriterId, Id<User, Long> userId) {
         return findPost(postId, postWriterId, userId)
@@ -92,6 +101,10 @@ public class CommentService {
 
     private void update(Comment comment) {
         commentRepository.update(comment);
+    }
+
+    private void delete(Id<Comment, Long> commentId) {
+        commentRepository.delete(commentId);
     }
 
 }

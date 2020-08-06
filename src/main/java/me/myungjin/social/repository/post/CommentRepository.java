@@ -15,6 +15,8 @@ public interface CommentRepository {
 
     void update(Comment comment);
 
+    void delete(Id<Comment, Long> commentId);
+
     Optional<Comment> findById(Id<Comment, Long> commentId, Id<User, Long> commentWriterId);
 
     List<Comment> findAll(Id<Post, Long> postId);
