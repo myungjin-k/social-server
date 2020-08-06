@@ -1,5 +1,6 @@
 package me.myungjin.social.service.post;
 
+import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.post.Post;
 import me.myungjin.social.model.user.User;
@@ -48,6 +49,15 @@ public class PostService {
     });
   }
 
+  @Transactional
+  public Post remove(Id<Post, Long> postId, Id<User, Long> writerId, Id<User, Long> userId) {
+      return findById(postId, writerId, userId)
+              .map(post -> {
+                delete(postId);
+                return post;
+              }).orElseThrow(() -> new NotFoundException(Post.class, postId, writerId, userId));
+  }
+
   @Transactional(readOnly = true)
   public Optional<Post> findById(Id<Post, Long> postId, Id<User, Long> writerId, Id<User, Long> userId) {
     checkNotNull(writerId, "writerId must be provided.");
@@ -77,4 +87,7 @@ public class PostService {
     postRepository.update(post);
   }
 
+  private void delete(Id<Post, Long> postId) {
+    postRepository.delete(postId);
+  }
 }

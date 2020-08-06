@@ -69,7 +69,7 @@ public class CommentService {
                 .map(comment -> {
                     delete(commentId);
                     return comment;
-                }).orElseThrow(() -> new NotFoundException(Comment.class, commentId));
+                }).orElseThrow(() -> new NotFoundException(Comment.class, postId, postWriterId, userId, commentId));
     }
 
     @Transactional(readOnly = true)

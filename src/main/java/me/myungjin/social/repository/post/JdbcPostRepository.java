@@ -59,6 +59,14 @@ public class JdbcPostRepository implements PostRepository {
     }
 
     @Override
+    public void delete(Id<Post, Long> postId) {
+        jdbcTemplate.update(
+                "DELETE FROM posts WHERE seq = ?",
+                postId.value()
+        );
+    }
+
+    @Override
     public Optional<Post> findById(Id<Post, Long> postId, Id<User, Long> writerId, Id<User, Long> userId) {
         List<Post> results = jdbcTemplate.query(
           "SELECT " +
@@ -84,9 +92,8 @@ public class JdbcPostRepository implements PostRepository {
             "p.user_seq=? " +
             "ORDER BY " +
             "p.seq DESC " +
-            "LIMIT " +
-            "?,?",
-          new Object[]{userId.value(), writerId.value(), offset, limit},
+            "LIMIT ? OFFSET ?",
+          new Object[]{userId.value(), writerId.value(), limit, offset},
           mapper
         );
     }

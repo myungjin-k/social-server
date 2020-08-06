@@ -82,7 +82,7 @@ class CommentServiceTest {
   @Order(3)
   void 코멘트를_수정한다() {
 
-    Comment comment = commentService.findById(postId, postWriterId, userId, commentId).orElseThrow(() -> new NotFoundException(Comment.class, postId, postWriterId, userId, commentId));
+    Comment comment = commentService.findById(postId, postWriterId, userId, commentId).orElse(null);
     assertThat(comment, is(notNullValue()));
     String contents = randomAlphabetic(40);
     comment.modify(contents);
@@ -95,11 +95,8 @@ class CommentServiceTest {
   @Test
   @Order(4)
   void 코멘트를_삭제한다() {
-
-    Comment comment = commentService.findById(postId, postWriterId, userId, commentId).orElseThrow(() -> new NotFoundException(Comment.class, postId, postWriterId, userId, commentId));
-    assertThat(comment, is(notNullValue()));
     commentService.remove(postId, postWriterId, userId, commentId);
-    comment = commentService.findById(postId, postWriterId, userId, commentId).orElse(null);
+    Comment comment = commentService.findById(postId, postWriterId, userId, commentId).orElse(null);
     assertThat(comment == null, is(true));
 
   }

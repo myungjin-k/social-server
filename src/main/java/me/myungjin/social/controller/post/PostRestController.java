@@ -82,6 +82,17 @@ public class PostRestController {
     );
   }
 
+  @DeleteMapping(path = "user/{userId}/post/{postId}")
+  public ApiResult<Post> delete(
+          @AuthenticationPrincipal JwtAuthentication authentication,
+          @PathVariable Long userId,
+          @PathVariable Long postId
+  ) {
+    return OK(
+            postService.remove(Id.of(Post.class, postId), Id.of(User.class, userId), authentication.id)
+    );
+}
+
   @PostMapping(path = "user/{userId}/post/{postId}/comment")
   public ApiResult<Comment> comment(
     @AuthenticationPrincipal JwtAuthentication authentication,

@@ -13,6 +13,8 @@ public interface PostRepository {
 
     void update(Post post);
 
+    void delete(Id<Post, Long> postId);
+
     Optional<Post> findById(Id<Post, Long> postId, Id<User, Long> writerId, Id<User, Long> userId);
 
     List<Post> findAll(Id<User, Long> writerId, Id<User, Long> userId, long offset, int limit);

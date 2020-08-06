@@ -1,6 +1,7 @@
 package me.myungjin.social.service.post;
 
 import me.myungjin.social.model.commons.Id;
+import me.myungjin.social.model.post.Comment;
 import me.myungjin.social.model.post.Post;
 import me.myungjin.social.model.post.Writer;
 import me.myungjin.social.model.user.User;
@@ -28,6 +29,8 @@ class PostServiceTest {
 
   @Autowired
   private PostService postService;
+  @Autowired
+  private CommentService commentService;
 
   private Id<Post, Long> postId;
 
@@ -108,4 +111,15 @@ class PostServiceTest {
     assertThat(post.getLikes(), is(beforeLikes));
   }
 
+  @Test
+  @Order(6)
+  void 포스트를_삭제한다() {
+
+    postService.remove(postId, writerId, userId);
+    Post post = postService.findById(postId, writerId, userId).orElse(null);
+    assertThat(post == null, is(true));
+
+    List<Comment> commentList = commentService.findAll(postId, writerId, userId);
+    assertThat(commentList.isEmpty(), is(true));
+  }
 }
