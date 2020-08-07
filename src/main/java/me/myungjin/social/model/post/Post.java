@@ -26,6 +26,8 @@ public class Post {
 
   private String contents;
 
+  private String postImageUrl;
+
   private int likes;
 
   private boolean likesOfMe;
@@ -37,10 +39,14 @@ public class Post {
   private final LocalDateTime createAt;
 
   public Post(Id<User, Long> userId, Writer writer, String contents) {
-    this(null, userId, contents, 0, false, 0, writer, null);
+    this(userId, writer, contents, null);
   }
 
-  public Post(Long seq, Id<User, Long> userId, String contents, int likes, boolean likesOfMe, int comments, Writer writer, LocalDateTime createAt) {
+  public Post(Id<User, Long> userId, Writer writer, String contents, String postImageUrl) {
+    this(null, userId, contents, postImageUrl, 0, false, 0, writer, null);
+  }
+
+  public Post(Long seq, Id<User, Long> userId, String contents, String postImageUrl, int likes, boolean likesOfMe, int comments, Writer writer, LocalDateTime createAt) {
     checkNotNull(userId, "userId must be provided.");
     checkArgument(isNotEmpty(contents), "contents must be provided.");
     checkArgument(
@@ -51,6 +57,7 @@ public class Post {
     this.seq = seq;
     this.userId = userId;
     this.contents = contents;
+    this.postImageUrl = postImageUrl;
     this.likes = likes;
     this.likesOfMe = likesOfMe;
     this.comments = comments;
@@ -58,7 +65,7 @@ public class Post {
     this.createAt = defaultIfNull(createAt, now());
   }
 
-  public void modify(String contents) {
+  public void modify(String contents, String postImageUrl) {
     checkArgument(isNotEmpty(contents), "contents must be provided.");
     checkArgument(
       contents.length() >= 4 && contents.length() <= 500,
@@ -66,6 +73,7 @@ public class Post {
     );
 
     this.contents = contents;
+    this.postImageUrl = postImageUrl;
   }
 
   public int incrementAndGetLikes() {
@@ -87,6 +95,10 @@ public class Post {
 
   public String getContents() {
     return contents;
+  }
+
+  public Optional<String> getPostImageUrl() {
+    return ofNullable(postImageUrl);
   }
 
   public int getLikes() {
@@ -128,6 +140,7 @@ public class Post {
       .append("seq", seq)
       .append("userId", userId)
       .append("contents", contents)
+      .append("postImageUrl", postImageUrl)
       .append("likes", likes)
       .append("likesOfMe", likesOfMe)
       .append("comments", comments)
@@ -140,6 +153,7 @@ public class Post {
     private Long seq;
     private Id<User, Long> userId;
     private String contents;
+    private String postImageUrl;
     private int likes;
     private boolean likesOfMe;
     private int comments;
@@ -153,6 +167,7 @@ public class Post {
       this.seq = post.seq;
       this.userId = post.userId;
       this.contents = post.contents;
+      this.postImageUrl = post.postImageUrl;
       this.likes = post.likes;
       this.likesOfMe = post.likesOfMe;
       this.comments = post.comments;
@@ -172,6 +187,11 @@ public class Post {
 
     public Builder contents(String contents) {
       this.contents = contents;
+      return this;
+    }
+
+    public Builder postImageUrl(String postImageUrl) {
+      this.postImageUrl = postImageUrl;
       return this;
     }
 
@@ -201,7 +221,7 @@ public class Post {
     }
 
     public Post build() {
-      return new Post(seq, userId, contents, likes, likesOfMe, comments, writer, createAt);
+      return new Post(seq, userId, contents, postImageUrl, likes, likesOfMe, comments, writer, createAt);
     }
   }
 

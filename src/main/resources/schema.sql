@@ -15,12 +15,13 @@ CREATE TABLE users (
 );
 
 CREATE TABLE posts (
-                       seq           bigint NOT NULL AUTO_INCREMENT,
-                       user_seq      bigint NOT NULL,
-                       contents      varchar(500) NOT NULL,
-                       like_count    int NOT NULL DEFAULT 0,
-                       comment_count int NOT NULL DEFAULT 0,
-                       create_at     datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+                       seq                bigint NOT NULL AUTO_INCREMENT,
+                       user_seq           bigint NOT NULL,
+                       contents           varchar(500) NOT NULL,
+                       post_image_url     varchar(255) DEFAULT  NULL,
+                       like_count         int NOT NULL DEFAULT 0,
+                       comment_count      int NOT NULL DEFAULT 0,
+                       create_at          datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
                        PRIMARY KEY (seq),
                        CONSTRAINT fk_post_to_user FOREIGN KEY (user_seq) REFERENCES users (seq) ON DELETE RESTRICT ON UPDATE RESTRICT
 );

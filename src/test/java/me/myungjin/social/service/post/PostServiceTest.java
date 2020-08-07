@@ -5,15 +5,23 @@ import me.myungjin.social.model.post.Comment;
 import me.myungjin.social.model.post.Post;
 import me.myungjin.social.model.post.Writer;
 import me.myungjin.social.model.user.User;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
+import static me.myungjin.social.model.commons.AttachedFile.toAttachedFile;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,10 +55,15 @@ class PostServiceTest {
 
   @Test
   @Order(1)
-  void 포스트를_작성한다() {
+  void 포스트를_작성한다() throws IOException {
     Writer writer = new Writer("test00@gmail.com", "test");
     String contents = randomAlphabetic(40);
-    Post post = postService.write(new Post(writerId, writer, contents));
+    URL testProfile = getClass().getResource("/test.jpg");
+    File file = new File(testProfile.getFile());
+    FileInputStream input = new FileInputStream(file);
+    MultipartFile multipartFile =  new MockMultipartFile("file",
+            file.getName(), "image/jpeg", IOUtils.toByteArray(input));
+    Post post = postService.write(new Post(writerId, writer, contents), toAttachedFile(multipartFile));
     assertThat(post, is(notNullValue()));
     assertThat(post.getSeq(), is(notNullValue()));
     assertThat(post.getContents(), is(contents));
@@ -60,13 +73,11 @@ class PostServiceTest {
   @Test
   @Order(2)
   void 포스트를_수정한다() {
-    Post post = postService.findById(postId, writerId, userId).orElse(null);
-    assertThat(post, is(notNullValue()));
     String contents = randomAlphabetic(40);
-    post.modify(contents);
-    postService.modify(post);
-    assertThat(post.getContents(), is(contents));
-    log.info("Modified post: {}", post);
+    Post modified = postService.modify(postId, writerId, userId, contents, null);
+    assertThat(modified.getContents(), is(contents));
+    assertThat(modified.getPostImageUrl().isPresent(), is(false));
+    log.info("Modified post: {}", modified);
   }
 
   @Test

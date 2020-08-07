@@ -31,12 +31,13 @@ public class JdbcPostRepository implements PostRepository {
     public Post save(Post post) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(conn -> {
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,?,?,?,?,?)", new String[]{"seq"});
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO posts(seq,user_seq,contents,post_image_url,like_count,comment_count,create_at) VALUES (null,?,?,?,?,?,?)", new String[]{"seq"});
             ps.setLong(1, post.getUserId().value());
             ps.setString(2, post.getContents());
-            ps.setInt(3, post.getLikes());
-            ps.setInt(4, post.getComments());
-            ps.setTimestamp(5, timestampOf(post.getCreateAt()));
+            ps.setString(3, post.getPostImageUrl().orElse(null));
+            ps.setInt(4, post.getLikes());
+            ps.setInt(5, post.getComments());
+            ps.setTimestamp(6, timestampOf(post.getCreateAt()));
             return ps;
         }, keyHolder);
 
@@ -50,8 +51,9 @@ public class JdbcPostRepository implements PostRepository {
     @Override
     public void update(Post post) {
         jdbcTemplate.update(
-          "UPDATE posts SET contents=?,like_count=?,comment_count=? WHERE seq=?",
+          "UPDATE posts SET contents=?,post_image_url=?,like_count=?,comment_count=? WHERE seq=?",
           post.getContents(),
+          post.getPostImageUrl().orElse(null),
           post.getLikes(),
           post.getComments(),
           post.getSeq()
@@ -102,6 +104,7 @@ public class JdbcPostRepository implements PostRepository {
       .seq(rs.getLong("seq"))
       .userId(Id.of(User.class, rs.getLong("user_seq")))
       .contents(rs.getString("contents"))
+      .postImageUrl(rs.getString("post_image_url"))
       .likes(rs.getInt("like_count"))
       .likesOfMe(rs.getBoolean("likesOfMe"))
       .comments(rs.getInt("comment_count"))

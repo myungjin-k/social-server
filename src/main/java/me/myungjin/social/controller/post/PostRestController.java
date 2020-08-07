@@ -11,13 +11,17 @@ import me.myungjin.social.model.user.User;
 import me.myungjin.social.security.JwtAuthentication;
 import me.myungjin.social.service.post.CommentService;
 import me.myungjin.social.service.post.PostService;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import static me.myungjin.social.controller.ApiResult.OK;
+import static me.myungjin.social.model.commons.AttachedFile.toAttachedFile;
 
 @RestController
 @RequestMapping("api")
@@ -32,13 +36,15 @@ public class PostRestController {
     this.commentService = commentService;
   }
 
-  @PostMapping(path = "post")
+  @PostMapping(path = "post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ApiResult<Post> posting(
     @AuthenticationPrincipal JwtAuthentication authentication,
-    @RequestBody PostingRequest request
-  ) {
+    @ModelAttribute PostingRequest request,
+    @RequestPart(required = false) MultipartFile file
+  ) throws IOException {
     return OK(
-      postService.write(request.newPost(authentication.id, new Writer(authentication.email, authentication.name)))
+      postService.write(request.newPost(authentication.id, new Writer(authentication.email, authentication.name)),
+              toAttachedFile(file))
     );
   }
 
@@ -53,20 +59,17 @@ public class PostRestController {
     );
   }
 
-  @PatchMapping(path = "user/{userId}/post/{postId}")
+  @PatchMapping(path = "user/{userId}/post/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ApiResult<Post> modify(
           @AuthenticationPrincipal JwtAuthentication authentication,
           @PathVariable Long userId,
           @PathVariable Long postId,
-          @RequestBody Map<String, String> modified
-  ) {
+          @RequestBody Map<String, String> modified,
+          @RequestPart(required = false) MultipartFile file
+  ) throws IOException {
     return OK(
-            postService.findById(Id.of(Post.class, postId), authentication.id, Id.of(User.class, userId))
-                    .map(post -> {
-                              post.modify(modified.get("contents"));
-                              postService.modify(post);
-                              return post;
-                    }).orElseThrow(() -> new NotFoundException(Post.class, Id.of(Post.class, postId), Id.of(User.class, userId)))
+           postService.modify(Id.of(Post.class, postId), authentication.id, Id.of(User.class, userId),
+                   modified.get("contents"), toAttachedFile(file))
     );
   }
 
