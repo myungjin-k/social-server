@@ -64,12 +64,12 @@ public class PostRestController {
           @AuthenticationPrincipal JwtAuthentication authentication,
           @PathVariable Long userId,
           @PathVariable Long postId,
-          @RequestBody Map<String, String> modified,
+          @ModelAttribute PostingRequest request,
           @RequestPart(required = false) MultipartFile file
   ) throws IOException {
     return OK(
            postService.modify(Id.of(Post.class, postId), authentication.id, Id.of(User.class, userId),
-                   modified.get("contents"), toAttachedFile(file))
+                   request.getContents(), toAttachedFile(file))
     );
   }
 

@@ -13,6 +13,10 @@ public class PostingRequest {
 
   protected PostingRequest() {}
 
+  public void setContents(String contents) {
+    this.contents = contents;
+  }
+
   public String getContents() {
     return contents;
   }
