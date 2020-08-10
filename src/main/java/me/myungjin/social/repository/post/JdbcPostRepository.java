@@ -100,6 +100,24 @@ public class JdbcPostRepository implements PostRepository {
         );
     }
 
+    @Override
+    public List<Post> findByConnection(Id<User, Long> userId, long offset, int limit) {
+        return jdbcTemplate.query(
+                "SELECT p.*, u.email,u.name,ifnull(l.seq,false) as likesOfMe " +
+                      "FROM POSTS p JOIN users u ON p.user_seq=u.seq LEFT OUTER JOIN likes l ON p.seq=l.post_seq AND l.user_seq=? " +
+                      "WHERE EXISTS" +
+                      "(SELECT 1 " +
+                      "FROM CONNECTIONS c " +
+                      "WHERE p.USER_SEQ = c.TARGET_SEQ " +
+                      "AND c.USER_SEQ = ?)" +
+                      "ORDER BY " +
+                      "p.seq DESC " +
+                      "LIMIT ? OFFSET ?",
+                new Object[]{userId.value(), userId.value(), limit, offset},
+                mapper
+        );
+    }
+
     static RowMapper<Post> mapper = (rs, rowNum) -> new Post.Builder()
       .seq(rs.getLong("seq"))
       .userId(Id.of(User.class, rs.getLong("user_seq")))

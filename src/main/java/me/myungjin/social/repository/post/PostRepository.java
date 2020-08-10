@@ -19,4 +19,6 @@ public interface PostRepository {
 
     List<Post> findAll(Id<User, Long> writerId, Id<User, Long> userId, long offset, int limit);
 
+    List<Post> findByConnection(Id<User, Long> userId, long offset, int limit);
+
 }

@@ -133,4 +133,13 @@ class PostServiceTest {
     List<Comment> commentList = commentService.findAll(postId, writerId, userId);
     assertThat(commentList.isEmpty(), is(true));
   }
+
+  @Test
+  @Order(7)
+  void 구독한_사용자의_포스트_목록을_조회한다() {
+    List<Post> connectedPostList = postService.feed(userId, 0, 20);
+    assertThat(connectedPostList, is(notNullValue()));
+    assertThat(connectedPostList.get(0).getUserId().value(), is(1L));
+    assertThat(connectedPostList.size(), is(3));
+  }
 }
