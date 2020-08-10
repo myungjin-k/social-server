@@ -157,4 +157,14 @@ public class PostRestController {
             commentService.remove(Id.of(Post.class, postId), Id.of(User.class, userId), authentication.id, Id.of(Comment.class, commentId))
     );
   }
+
+  @GetMapping(path = "/user/feed")
+  public ApiResult<List<Post>> feed(
+          @AuthenticationPrincipal JwtAuthentication authentication,
+          Pageable pageable
+  ) {
+    return OK(
+            postService.feed(authentication.id, pageable.offset(), pageable.limit())
+    );
+  }
 }
