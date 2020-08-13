@@ -64,8 +64,8 @@ class ConnectionServiceTest {
 
   @Test
   @Order(2)
-  void 승인하지_않은_친구_리스트를_가져온다() {
-    List<Connection> resultList = connectionService.findUngrantedConnections(targetId);
+  void 나의_진행중인_친구_요청_리스트를_가져온다() {
+    List<Connection> resultList = connectionService.findProceedingConnectionRequests(userId);
     assertThat(resultList, is(notNullValue()));
     assertThat(resultList.size(), is(1));
     assertThat(resultList.get(0).getTargetId(), is(targetId));
@@ -74,6 +74,16 @@ class ConnectionServiceTest {
 
   @Test
   @Order(3)
+  void 내가_승인하지_않은_친구_리스트를_가져온다() {
+    List<Connection> resultList = connectionService.findConnectionsNeedToBeGrantedByMe(targetId);
+    assertThat(resultList, is(notNullValue()));
+    assertThat(resultList.size(), is(1));
+    assertThat(resultList.get(0).getTargetId(), is(targetId));
+    assertThat(resultList.get(0).getUserId(), is(userId));
+  }
+
+  @Test
+  @Order(4)
   void 친구요청을_수락한다() {
     Connection granted = connectionService.grant(userId, targetId);
 
@@ -84,6 +94,14 @@ class ConnectionServiceTest {
 
   @Test
   @Order(4)
+  void 나를_친구_추가한_사용자_리스트를_가져온다() {
+    List<Connection> followers = connectionService.findFollowers(targetId);
+
+    assertThat(followers, is(notNullValue()));
+  }
+
+  @Test
+  @Order(5)
   void 친구구독을_취소한다() {
     Connection quited = connectionService.quit(userId, targetId);
     assertThat(quited, is(notNullValue()));

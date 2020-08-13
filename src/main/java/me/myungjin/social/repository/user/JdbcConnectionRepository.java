@@ -64,11 +64,22 @@ public class JdbcConnectionRepository implements ConnectionRepository{
     }
 
     @Override
-    public List<Connection> findUngrantedConnectionsById(Id<User, Long> targetId) {
-        return jdbcTemplate.query("select c.*, u.NAME, u.EMAIL from connections c JOIN users u ON c.user_seq=u.seq where target_seq = ? and granted_at is null order by seq desc",
+    public List<Connection> findUngrantedConnectionsByUserId(Id<User, Long> userId) {
+        return jdbcTemplate.query("select c.*, u.NAME, u.EMAIL from connections c JOIN users u ON c.target_seq=u.seq where user_seq = ? and c.granted_at is null order by seq desc",
+                new Object[]{userId.value()}, mapper);
+    }
+
+    @Override
+    public List<Connection> findConnectionsByTargetId(Id<User, Long> targetId) {
+        return jdbcTemplate.query("select c.*, u.NAME, u.EMAIL from connections c JOIN users u ON c.user_seq=u.seq where target_seq = ? and c.granted_at is not null order by seq desc",
                 new Object[]{targetId.value()}, mapper);
     }
 
+    @Override
+    public List<Connection> findUngrantedConnectionsByTargetId(Id<User, Long> targetId) {
+        return jdbcTemplate.query("select c.*, u.NAME, u.EMAIL from connections c JOIN users u ON c.user_seq=u.seq where target_seq = ? and c.granted_at is null order by seq desc",
+                new Object[]{targetId.value()}, mapper);
+    }
 
     @Override
     public void grant(Connection connection) {
