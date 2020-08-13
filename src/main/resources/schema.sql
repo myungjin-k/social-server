@@ -69,3 +69,13 @@ CREATE TABLE subscriptions (
                                CONSTRAINT unq_subscriptions UNIQUE (user_seq, endpoint),
                                CONSTRAINT fk_subscriptions_to_user FOREIGN KEY (user_seq) REFERENCES users (seq) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
+
+CREATE TABLE notifications (
+                               seq          bigint NOT NULL AUTO_INCREMENT,
+                               user_seq     bigint NOT NULL,
+                               message      varchar(200) NOT NULL,
+                               click_target varchar(200) DEFAULT NULL,
+                               create_at    datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+                               PRIMARY KEY  (seq),
+                               CONSTRAINT   fk_notifications_to_user FOREIGN KEY (user_seq) REFERENCES users (seq) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
