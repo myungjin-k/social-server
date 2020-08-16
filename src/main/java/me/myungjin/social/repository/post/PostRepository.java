@@ -21,4 +21,6 @@ public interface PostRepository {
 
     List<Post> findByConnection(Id<User, Long> userId, long offset, int limit);
 
+    List<Post> findByContents(Id<User, Long> userId, String words, long offset, int limit);
+
 }

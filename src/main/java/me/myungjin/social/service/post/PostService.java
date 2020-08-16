@@ -120,6 +120,17 @@ public class PostService {
     return postRepository.findByConnection(userId, offset, limit);
   }
 
+  @Transactional(readOnly = true)
+  public List<Post> search(Id<User, Long> userId, String words, long offset, int limit){
+    checkNotNull(userId, "userId must be provided.");
+    checkNotNull(words, "words must be provided.");
+    if(offset < 0)
+      offset = 0;
+    if(limit < 1 || limit > 5)
+      limit = 5;
+    return postRepository.findByContents(userId, words, offset, limit);
+  }
+
   private Post save(Post post) {
     return postRepository.save(post);
   }

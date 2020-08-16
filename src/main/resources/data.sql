@@ -3,13 +3,15 @@ INSERT INTO users(seq,email,name,passwd) VALUES (null,'test01@gmail.com','user01
 INSERT INTO users(seq,email,name,passwd) VALUES (null,'test02@gmail.com','user02','$2a$10$hO38hmoHN1k7Zm3vm95C2eZEtSOaiI/6xZrRAx8l0e78i9.NK8bHG');
 INSERT INTO users(seq,name,email,passwd,role) VALUES (null,'mjkim','mjkim@gmail.com','$2a$10$xZv14x3VuSanG5/nuEAV.Ox.u3FI3grK55tYyCiKU0g10Og8XbFg2','ADMIN');
 
-INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,1,'test01 first post',1,1,'2019-03-01 13:10:00');
-INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,1,'test01 second post',0,0,'2019-03-12 09:45:00');
-INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,1,'test01 third post',0,0,'2019-03-20 19:05:00');
-INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,2,'test02 post',0,0,'2019-03-20 15:13:20');
+INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,1,'user00 first post',1,1,'2019-03-01 13:10:00');
+INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,1,'user00 second post',0,0,'2019-03-12 09:45:00');
+INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,1,'user00 third post',0,0,'2019-03-20 19:05:00');
+INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,2,'user01 post',0,0,'2019-03-20 15:13:20');
 INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,4,'mjkim first post',1,1,'2019-03-01 13:10:00');
 INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,4,'mjkim second post',0,0,'2019-03-12 09:45:00');
 INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,4,'mjkim third post',0,0,'2019-03-20 19:05:00');
+INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,3,'user02 first post',0,0,'2019-03-01 13:10:00');
+INSERT INTO posts(seq,user_seq,contents,like_count,comment_count,create_at) VALUES (null,3,'user02 second post',0,0,'2019-03-12 09:45:00');
 
 INSERT INTO comments(seq,user_seq,post_seq,contents,create_at) VALUES (null,1,1,'first comment','2019-03-01 13:15:00');
 INSERT INTO comments(seq,user_seq,post_seq,contents,create_at) VALUES (null,2,4,'first comment','2019-03-01 13:15:00');
@@ -17,4 +19,7 @@ INSERT INTO comments(seq,user_seq,post_seq,contents,create_at) VALUES (null,2,4,
 //INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,1,2,'2019-03-31 13:00:00','2019-03-31 00:10:00');
 INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,2,1,'2019-03-31 13:00:00','2019-03-31 00:10:00');
 INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,4,1,'2019-03-31 13:00:00','2019-03-31 00:10:00');
+INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,3,2,'2019-03-31 13:00:00','2019-03-31 00:10:00');
+INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,3,2,'2019-03-31 13:00:00','2019-03-31 00:10:00');
+INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,4,3,'2019-03-31 13:00:00','2019-03-31 00:10:00');
 //INSERT INTO connections(seq,user_seq,target_seq,granted_at,create_at) VALUES (null,1,4,'2019-03-31 13:00:00','2019-03-31 00:10:00');

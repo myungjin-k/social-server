@@ -118,6 +118,20 @@ public class JdbcPostRepository implements PostRepository {
         );
     }
 
+    @Override
+    public List<Post> findByContents(Id<User, Long> userId, String words, long offset, int limit) {
+        return jdbcTemplate.query(
+                "SELECT p.*, u.email,u.name,ifnull(l.seq,false) as likesOfMe " +
+                        "FROM POSTS p JOIN users u ON p.user_seq=u.seq LEFT OUTER JOIN likes l ON p.seq=l.post_seq AND l.user_seq=? " +
+                        "WHERE p.contents ilike '%' || ? || '%'" +
+                        "ORDER BY " +
+                        "p.seq DESC " +
+                        "LIMIT ? OFFSET ?",
+                new Object[]{userId.value(), words, limit, offset},
+                mapper
+        );
+    }
+
     static RowMapper<Post> mapper = (rs, rowNum) -> new Post.Builder()
       .seq(rs.getLong("seq"))
       .userId(Id.of(User.class, rs.getLong("user_seq")))

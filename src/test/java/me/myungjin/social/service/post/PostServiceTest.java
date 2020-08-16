@@ -1,5 +1,6 @@
 package me.myungjin.social.service.post;
 
+import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.post.Comment;
 import me.myungjin.social.model.post.Post;
@@ -125,9 +126,12 @@ class PostServiceTest {
   @Test
   @Order(6)
   void 포스트를_삭제한다() {
+    Post post = postService.findById(postId, writerId, userId).orElse(null);
+    assertThat(post, is(notNullValue()));
+    log.info("Post will be deleted : {}", post);
 
     postService.remove(postId, writerId, userId);
-    Post post = postService.findById(postId, writerId, userId).orElse(null);
+    post = postService.findById(postId, writerId, userId).orElse(null);
     assertThat(post == null, is(true));
 
     List<Comment> commentList = commentService.findAll(postId, writerId, userId);
@@ -141,5 +145,15 @@ class PostServiceTest {
     assertThat(connectedPostList, is(notNullValue()));
     assertThat(connectedPostList.get(0).getUserId().value(), is(1L));
     assertThat(connectedPostList.size(), is(3));
+  }
+
+  @Test
+  @Order(8)
+  void 포스트_내용을_검색한다() {
+    List<Post> resultList = postService.search(userId, "first", 0, 20);
+    assertThat(resultList, is(notNullValue()));
+    assertThat(resultList.size(), is(2));
+    log.info("Searched Post 1 : {}", resultList.get(0));
+    log.info("Searched Post 2 : {}", resultList.get(1));
   }
 }
