@@ -167,4 +167,16 @@ public class PostRestController {
             postService.feed(authentication.id, pageable.offset(), pageable.limit())
     );
   }
+
+  @GetMapping(path = "/post/search")
+  public ApiResult<List<Post>> search(
+          @AuthenticationPrincipal JwtAuthentication authentication,
+          @RequestBody Map<String, String> searchParam,
+          Pageable pageable
+  ) {
+    return OK(
+            postService.search(authentication.id, searchParam.get("words"), pageable.offset(), pageable.limit())
+    );
+  }
+
 }
