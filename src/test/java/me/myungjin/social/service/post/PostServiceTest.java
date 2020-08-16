@@ -150,7 +150,7 @@ class PostServiceTest {
   @Test
   @Order(8)
   void 포스트_내용을_검색한다() {
-    List<Post> resultList = postService.search(userId, "first", 0, 20);
+    List<Post> resultList = postService.search(Id.of(User.class, 4L), "first", 0, 20);
     assertThat(resultList, is(notNullValue()));
     assertThat(resultList.size(), is(2));
     log.info("Searched Post 1 : {}", resultList.get(0));

@@ -121,13 +121,21 @@ public class JdbcPostRepository implements PostRepository {
     @Override
     public List<Post> findByContents(Id<User, Long> userId, String words, long offset, int limit) {
         return jdbcTemplate.query(
-                "SELECT p.*, u.email,u.name,ifnull(l.seq,false) as likesOfMe " +
-                        "FROM POSTS p JOIN users u ON p.user_seq=u.seq LEFT OUTER JOIN likes l ON p.seq=l.post_seq AND l.user_seq=? " +
-                        "WHERE p.contents ilike '%' || ? || '%'" +
-                        "ORDER BY " +
-                        "p.seq DESC " +
-                        "LIMIT ? OFFSET ?",
-                new Object[]{userId.value(), words, limit, offset},
+                "SELECT h.* " +
+                "FROM (" +
+                    "SELECT p.*, u.email,u.name,ifnull(l.seq,false) as likesOfMe " +
+                    "FROM POSTS p " +
+                    "JOIN users u ON p.user_seq=u.seq " +
+                    "LEFT OUTER JOIN likes l ON p.seq=l.post_seq AND l.user_seq=? " +
+                    "WHERE 1 = (" +
+                            "SELECT CASE WHEN EXISTS (SELECT 1 FROM CONNECTIONS c WHERE p.user_seq = c.TARGET_SEQ AND c.user_seq=?) THEN 1 " +
+                            "WHEN p.user_seq = ? THEN 1 ELSE 0 END " +
+                            "FROM DUAL)" +
+                ") h " +
+                "WHERE h.contents ilike '%' || ? || '%' " +
+                "ORDER BY h.seq DESC " +
+                "LIMIT ? OFFSET ?",
+                new Object[]{userId.value(), userId.value(), userId.value(),  words, limit, offset},
                 mapper
         );
     }
