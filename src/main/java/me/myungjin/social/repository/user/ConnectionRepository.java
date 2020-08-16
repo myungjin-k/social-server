@@ -15,7 +15,11 @@ public interface ConnectionRepository {
 
     Connection save(Connection connection);
 
-    List<Connection> findUngrantedConnectionsById(Id<User, Long> targetId);
+    List<Connection> findUngrantedConnectionsByUserId(Id<User, Long> userId);
+
+    List<Connection> findConnectionsByTargetId(Id<User, Long> targetId);
+
+    List<Connection> findUngrantedConnectionsByTargetId(Id<User, Long> targetId);
 
     void grant(Connection connection);
 

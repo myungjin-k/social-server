@@ -68,10 +68,24 @@ public class ConnectionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Connection> findUngrantedConnections(Id<User, Long> targetId) {
+    public List<Connection> findFollowers(Id<User, Long> targetId) {
         checkNotNull(targetId, "targetId must be provided.");
 
-        return connectionRepository.findUngrantedConnectionsById(targetId);
+        return connectionRepository.findConnectionsByTargetId(targetId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Connection> findConnectionsNeedToBeGrantedByMe(Id<User, Long> targetId) {
+        checkNotNull(targetId, "targetId must be provided.");
+
+        return connectionRepository.findUngrantedConnectionsByTargetId(targetId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Connection> findProceedingConnectionRequests(Id<User, Long> userId) {
+        checkNotNull(userId, "userId must be provided.");
+
+        return connectionRepository.findUngrantedConnectionsByUserId(userId);
     }
 
     @Transactional(readOnly = true)

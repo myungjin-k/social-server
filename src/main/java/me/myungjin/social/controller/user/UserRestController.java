@@ -94,6 +94,13 @@ public class UserRestController {
                         .orElse(null)
         );
     }
+
+    @GetMapping(path = "user/connections/proceeding")
+    public ApiResult<List<Connection>> proceedingConnectionRequests(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return OK(
+               connectionService.findProceedingConnectionRequests(authentication.id)
+        );
+    }
  // 구독 취소와 같은 개념?
     @DeleteMapping(path = "user/connections/{targetId}")
     public ApiResult<Connection> quitConnection(@AuthenticationPrincipal JwtAuthentication authentication,
@@ -101,9 +108,14 @@ public class UserRestController {
         return OK(connectionService.quit(authentication.id, Id.of(User.class, targetId)));
     }
 
+    @GetMapping(path = "user/connections/followers")
+    public ApiResult<List<Connection>> followers(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return OK(connectionService.findFollowers(authentication.id));
+    }
+
     @GetMapping(path = "user/connections/grant")
     public ApiResult<List<Connection>> ungrantedConnections(@AuthenticationPrincipal JwtAuthentication authentication) {
-        return OK(connectionService.findUngrantedConnections(authentication.id));
+        return OK(connectionService.findConnectionsNeedToBeGrantedByMe(authentication.id));
     }
 
     @PatchMapping(path = "user/connections/grant/{userId}")
