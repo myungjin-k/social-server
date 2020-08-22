@@ -9,7 +9,6 @@ import me.myungjin.social.model.notification.Noti;
 import me.myungjin.social.model.notification.PushMessage;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.service.notification.NotificationService;
-import me.myungjin.social.service.user.ConnectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +20,10 @@ public class ConnectionRequestEventListener implements AutoCloseable {
 
     private final NotificationService notificationService;
 
-    private final ConnectionService connectionService;
-
-    public ConnectionRequestEventListener(EventBus eventBus, NotificationService notificationService, ConnectionService connectionService) {
+    public ConnectionRequestEventListener(EventBus eventBus, NotificationService notificationService) {
         this.eventBus = eventBus;
         this.notificationService = notificationService;
         eventBus.register(this);
-        this.connectionService = connectionService;
     }
 
     @Subscribe

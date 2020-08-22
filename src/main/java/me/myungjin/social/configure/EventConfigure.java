@@ -82,13 +82,13 @@ public class EventConfigure {
 
   @Bean(destroyMethod = "close")
   public ConnectionRequestEventListener connectionRequestEventListener(
-          EventBus eventBus, NotificationService notificationService, ConnectionService connectionService) {
-    return new ConnectionRequestEventListener(eventBus, notificationService, connectionService);
+          EventBus eventBus, NotificationService notificationService) {
+    return new ConnectionRequestEventListener(eventBus, notificationService);
   }
 
   @Bean(destroyMethod = "close")
   public ConnectionGrantEventListener connectionGrantEventListener(
-          EventBus eventBus, NotificationService notificationService, ConnectionService connectionService) {
-    return new ConnectionGrantEventListener(eventBus, notificationService, connectionService);
+          EventBus eventBus, NotificationService notificationService) {
+    return new ConnectionGrantEventListener(eventBus, notificationService);
   }
 }
