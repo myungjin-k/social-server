@@ -36,9 +36,7 @@ public class ConnectionGrantEventListener implements AutoCloseable {
     public void handleConnectionGrantEvent(ConnectionRequestEvent event) throws Exception {
         Id<User, Long> requestedUserId = event.getRequestedUserId();
         Id<User, Long> targetId = event.getTargetId();
-        Connection connection = connectionService.findById(requestedUserId, targetId)
-                .orElseThrow(() -> new NotFoundException(Connection.class, event));
-        log.info("{} granted a requested connection of {} !", targetId, requestedUserId);
+        log.info("{} granted a requested connection with {} !", targetId, requestedUserId);
 
         try {
             log.info("Try to send push for {}", event);

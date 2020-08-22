@@ -35,9 +35,7 @@ public class ConnectionRequestEventListener implements AutoCloseable {
     public void handleConnectionRequestEvent(ConnectionRequestEvent event) throws Exception {
         Id<User, Long> requestedUserId = event.getRequestedUserId();
         Id<User, Long> targetId = event.getTargetId();
-        Connection connection = connectionService.findById(requestedUserId, targetId)
-                .orElseThrow(() -> new NotFoundException(Connection.class, event));
-        log.info("{} requested a new connection of {} !", requestedUserId, targetId);
+        log.info("{} requested a new connection with {} !", requestedUserId, targetId);
 
         try {
             log.info("Try to send push for {}", event);

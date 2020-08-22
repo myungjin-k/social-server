@@ -11,7 +11,7 @@ import static java.time.LocalDateTime.now;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public class Notification {
+public class Noti {
 
     @JsonIgnore
     private final Long seq;
@@ -24,11 +24,11 @@ public class Notification {
 
     private final LocalDateTime createAt;
 
-    public Notification(Id<User, Long> userId, String message, String clickTarget) {
+    public Noti(Id<User, Long> userId, String message, String clickTarget) {
         this(null, userId, message, clickTarget, null);
     }
 
-    public Notification(Long seq, Id<User, Long> userId, String message, String clickTarget, LocalDateTime createAt) {
+    public Noti(Long seq, Id<User, Long> userId, String message, String clickTarget, LocalDateTime createAt) {
         checkNotNull(userId, "userId must be provided.");
         checkNotNull(message, "message must be provided.");
         this.seq = seq;
@@ -79,12 +79,12 @@ public class Notification {
         public Builder() {
         }
 
-        public Builder(Notification notification) {
-            this.seq = notification.seq;
-            this.userId = notification.userId;
-            this.message = notification.message;
-            this.clickTarget = notification.clickTarget;
-            this.createAt = notification.createAt;
+        public Builder(Noti noti) {
+            this.seq = noti.seq;
+            this.userId = noti.userId;
+            this.message = noti.message;
+            this.clickTarget = noti.clickTarget;
+            this.createAt = noti.createAt;
         }
         public Builder seq(Long seq){
             this.seq = seq;
@@ -111,8 +111,8 @@ public class Notification {
             return this;
         }
 
-        public Notification build() {
-            return new Notification(seq, userId, message, clickTarget, createAt);
+        public Noti build() {
+            return new Noti(seq, userId, message, clickTarget, createAt);
         }
     }
 }

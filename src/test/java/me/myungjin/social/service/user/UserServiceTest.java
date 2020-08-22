@@ -1,11 +1,9 @@
 package me.myungjin.social.service.user;
 
-import me.myungjin.social.error.DuplicateKeyException;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.model.commons.AttachedFile;
 import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.user.ConnectedUser;
-import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.User;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
