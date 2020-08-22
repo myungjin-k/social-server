@@ -3,11 +3,10 @@ package me.myungjin.social.controller.event.listener;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import me.myungjin.social.controller.event.ConnectionRequestEvent;
-import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.error.NotNotifiedException;
 import me.myungjin.social.model.commons.Id;
+import me.myungjin.social.model.notification.Noti;
 import me.myungjin.social.model.notification.PushMessage;
-import me.myungjin.social.model.user.Connection;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.service.notification.NotificationService;
 import me.myungjin.social.service.user.ConnectionService;
@@ -39,12 +38,13 @@ public class ConnectionRequestEventListener implements AutoCloseable {
 
         try {
             log.info("Try to send push for {}", event);
-            notificationService.notifyUser(targetId,
-                    new PushMessage(
-                            "new connection request!",
-                            "user/connections/grant",
-                            "Please check new connection request"
-                    ));
+            PushMessage pushMessage = new PushMessage(
+                    "new connection request!",
+                    "user/connections/grant",
+                    "Please check new connection request"
+            );
+            notificationService.save(new Noti(targetId, pushMessage.getMessage(), pushMessage.getClickTarget()));
+            notificationService.notifyUser(targetId, pushMessage);
         } catch (Exception e) {
             log.error("Got error while handling event ConnectionRequestEvent " + event.toString(), e);
             throw new NotNotifiedException(ConnectionRequestEvent.class, e.getMessage(), event);

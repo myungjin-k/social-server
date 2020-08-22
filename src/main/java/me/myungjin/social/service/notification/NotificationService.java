@@ -49,9 +49,9 @@ public class NotificationService {
 
     @Transactional
     public PushMessage notifyUser(Id<User, Long> userId, PushMessage message) throws Exception {
+      // save(new Noti(userId, message.getMessage(), message.getClickTarget()));
        sendNotification(findByUserId(userId).orElseThrow(() -> new NotFoundException(Subscription.class, userId)),
                          message);
-        save(new Noti(userId, message.getMessage(), message.getClickTarget()));
        return message;
     }
 
@@ -59,7 +59,6 @@ public class NotificationService {
     public PushMessage notifyAll(PushMessage message) throws Exception {
         for (Subscription subscription : findAll() ) {
             sendNotification(subscription, message);
-            save(new Noti(subscription.getUserId(), message.getMessage(), message.getClickTarget()));
         }
         return message;
     }
@@ -98,7 +97,7 @@ public class NotificationService {
         return subscriptionRepository.save(subscription);
     }
 
-    private Noti save(Noti noti) {
+    public Noti save(Noti noti) {
         return notificationRepository.save(noti);
     }
 }
