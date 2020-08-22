@@ -6,6 +6,7 @@ import me.myungjin.social.controller.event.CommentCreateEvent;
 import me.myungjin.social.error.NotFoundException;
 import me.myungjin.social.error.NotNotifiedException;
 import me.myungjin.social.model.commons.Id;
+import me.myungjin.social.model.notification.Noti;
 import me.myungjin.social.model.notification.PushMessage;
 import me.myungjin.social.model.post.Post;
 import me.myungjin.social.model.user.User;
@@ -41,12 +42,13 @@ public class CommentCreateEventListener implements AutoCloseable {
 
         try {
             log.info("Try to send push for {}", event);
-            notificationService.notifyUser(postWriterId,
-                    new PushMessage(
-                            "[" + post.getContents() +"] commented!",
-                            "user/" + postWriterId.value() + "/post/" + postId.value() + "/comment",
-                            "Please check new comment"
-                    ));
+            PushMessage pushMessage = new PushMessage(
+                    "[" + post.getContents() +"] commented!",
+                    "user/" + postWriterId.value() + "/post/" + postId.value() + "/comment",
+                    "Please check new comment"
+            );
+            notificationService.save(new Noti(postWriterId, pushMessage.getMessage(), pushMessage.getClickTarget()));
+            notificationService.notifyUser(postWriterId, pushMessage);
         } catch (Exception e) {
             log.error("Got error while handling event CommentCreateEvent " + event.toString(), e);
             //e.printStackTrace();
