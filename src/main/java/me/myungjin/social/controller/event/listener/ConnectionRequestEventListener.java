@@ -39,7 +39,7 @@ public class ConnectionRequestEventListener implements AutoCloseable {
                     "user/connections/grant",
                     "Please check new connection request"
             );
-            notificationService.save(new Noti(targetId, pushMessage.getMessage(), pushMessage.getClickTarget()));
+            notificationService.save(new Noti(targetId, pushMessage.getTitle(), pushMessage.getClickTarget()));
             notificationService.notifyUser(targetId, pushMessage);
         } catch (Exception e) {
             log.error("Got error while handling event ConnectionRequestEvent " + event.toString(), e);
