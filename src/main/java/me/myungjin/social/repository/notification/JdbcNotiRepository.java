@@ -46,7 +46,8 @@ public class JdbcNotiRepository implements NotiRepository {
 
     @Override
     public void delete(Id<Noti, Long> notificationId) {
-
+        jdbcTemplate.update("DELETE FROM NOTIFICATIONS WHERE seq = ?",
+                notificationId.value());
     }
 
     @Override
