@@ -28,7 +28,7 @@ public class NotiController {
     }
 
     @DeleteMapping(path = "noti/{notiId}")
-    public ApiResult<Noti> findAll(@AuthenticationPrincipal JwtAuthentication authentication,
+    public ApiResult<Noti> remove(@AuthenticationPrincipal JwtAuthentication authentication,
                                          @PathVariable Long notiId) {
         return OK(notificationService.remove(Id.of(Noti.class, notiId), authentication.id));
     }
