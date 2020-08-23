@@ -47,7 +47,7 @@ public class CommentCreateEventListener implements AutoCloseable {
                     "user/" + postWriterId.value() + "/post/" + postId.value() + "/comment",
                     "Please check new comment"
             );
-            notificationService.save(new Noti(postWriterId, pushMessage.getMessage(), pushMessage.getClickTarget()));
+            notificationService.save(new Noti(postWriterId, pushMessage.getTitle(), pushMessage.getClickTarget()));
             notificationService.notifyUser(postWriterId, pushMessage);
         } catch (Exception e) {
             log.error("Got error while handling event CommentCreateEvent " + event.toString(), e);

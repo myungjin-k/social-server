@@ -39,7 +39,7 @@ public class ConnectionGrantEventListener implements AutoCloseable {
                     "user/" + requestedUserId.value() + "/post/list",
                     "You can check new friend's posts"
             );
-            notificationService.save(new Noti(targetId, pushMessage.getMessage(), pushMessage.getClickTarget()));
+            notificationService.save(new Noti(targetId, pushMessage.getTitle(), pushMessage.getClickTarget()));
             notificationService.notifyUser(requestedUserId, pushMessage);
         } catch (Exception e) {
             log.error("Got error while handling event ConnectionGrantEvent " + event.toString(), e);
