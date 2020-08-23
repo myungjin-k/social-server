@@ -65,7 +65,7 @@ public class JdbcConnectionRepository implements ConnectionRepository{
 
     @Override
     public List<Connection> findUngrantedConnectionsByUserId(Id<User, Long> userId) {
-        return jdbcTemplate.query("select c.*, u.NAME, u.EMAIL from connections c JOIN users u ON c.target_seq=u.seq where user_seq = ? and c.granted_at is null order by seq desc",
+        return jdbcTemplate.query("select c.*, u.NAME, u.EMAIL from connections c JOIN users u ON c.user_seq=u.seq where user_seq = ? and c.granted_at is null order by seq desc",
                 new Object[]{userId.value()}, mapper);
     }
 
