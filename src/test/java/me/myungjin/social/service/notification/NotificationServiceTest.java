@@ -33,6 +33,8 @@ public class NotificationServiceTest {
 
     private Id<User, Long> userId;
 
+    private Id<Noti, Long> notiId;
+
 
     @BeforeAll
     void setUp() {
@@ -53,6 +55,7 @@ public class NotificationServiceTest {
         assertThat(newNoti.getUserId(), is(noti.getUserId()));
 
         log.info("Saved noti: {}", newNoti);
+        notiId = Id.of(Noti.class, newNoti.getSeq());
     }
 
 
@@ -65,5 +68,14 @@ public class NotificationServiceTest {
         assertThat(notiList.size(), is(1));
 
     }
+    @Test
+    @Order(3)
+    void 로그인_사용자의_알림을_삭제한다() throws Exception {
+        Noti deleted = notificationService.remove(notiId, userId);
 
+        assertThat(deleted, is(notNullValue()));
+        assertThat(deleted.getSeq(), is(notiId.value()));
+
+        log.info("Deleted noti: {}", deleted);
+    }
 }

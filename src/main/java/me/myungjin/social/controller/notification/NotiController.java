@@ -1,13 +1,12 @@
 package me.myungjin.social.controller.notification;
 
 import me.myungjin.social.controller.ApiResult;
+import me.myungjin.social.model.commons.Id;
 import me.myungjin.social.model.notification.Noti;
 import me.myungjin.social.security.JwtAuthentication;
 import me.myungjin.social.service.notification.NotificationService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,4 +27,9 @@ public class NotiController {
         return OK(notificationService.findAll(authentication.id));
     }
 
+    @DeleteMapping(path = "noti/{notiId}")
+    public ApiResult<Noti> remove(@AuthenticationPrincipal JwtAuthentication authentication,
+                                         @PathVariable Long notiId) {
+        return OK(notificationService.remove(Id.of(Noti.class, notiId), authentication.id));
+    }
 }

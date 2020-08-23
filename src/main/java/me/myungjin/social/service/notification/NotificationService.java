@@ -81,6 +81,15 @@ public class NotificationService {
 
     }
 
+    @Transactional
+    public Noti remove(Id<Noti, Long> notiId, Id<User, Long> userId){
+        return findByUserId(notiId, userId)
+                .map(noti -> {
+                    notificationRepository.delete(notiId);
+                    return noti;
+                }).orElseThrow(() -> new NotFoundException(Noti.class, notiId, userId));
+    }
+
     @Transactional(readOnly = true)
     public Optional<Noti> findByUserId(Id<Noti, Long> notiId, Id<User, Long> userId){
         checkNotNull(notiId, "notiId must be provided.");

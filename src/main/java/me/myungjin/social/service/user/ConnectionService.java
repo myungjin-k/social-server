@@ -61,10 +61,9 @@ public class ConnectionService {
 
     @Transactional
     public Connection quit(Id<User, Long> userId, Id<User, Long> targetId){
-        return findById(userId, targetId).map(connection -> {
-            connectionRepository.delete(connection);
-            return connection;
-        }).orElseThrow(() -> new NotFoundException(Connection.class, userId, targetId));
+        return findById(userId, targetId)
+                .map(this::delete)
+                .orElseThrow(() -> new NotFoundException(Connection.class, userId, targetId));
     }
 
     @Transactional(readOnly = true)
