@@ -83,6 +83,17 @@ public class JdbcCommentRepository implements CommentRepository {
         );
     }
 
+    @Override
+    public int countCommentsFromOthers(Id<Post, Long> postId, Id<User, Long> postWriterId) {
+        Optional<Integer> result = ofNullable(jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM comments c WHERE c.post_seq=? AND c.user_seq != ?",
+                new Object[]{postId.value(), postWriterId.value()},
+                (rs, rowNum) -> rs.getInt(1)
+        ));
+
+        return result.orElse(0);
+    }
+
     static RowMapper<Comment> mapper = (rs, rowNum) -> new Comment.Builder()
       .seq(rs.getLong("seq"))
       .userId(Id.of(User.class, rs.getLong("user_seq")))

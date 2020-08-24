@@ -86,6 +86,12 @@ public class CommentService {
                 .orElseThrow(() -> new NotFoundException(Post.class, postId, userId));
     }
 
+    @Transactional(readOnly = true)
+    public int countCommentsFromOthers(Id<Post, Long> postId, Id<User, Long> postWriterId, Id<User, Long> userId){
+        checkArgument(postWriterId.equals(userId), "postWriterId must equals userId");
+        return commentRepository.countCommentsFromOthers(postId, postWriterId);
+    }
+
     private Optional<Post> findPost(Id<Post, Long> postId, Id<User, Long> postWriterId, Id<User, Long> userId) {
         checkNotNull(postId, "postId must be provided.");
         checkNotNull(postWriterId, "postWriterId must be provided.");
