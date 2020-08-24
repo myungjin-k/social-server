@@ -80,6 +80,14 @@ class CommentServiceTest {
 
   @Test
   @Order(3)
+  void 내_포스트에_달린_다른_사용자의_댓글_수를_조회한다() {
+    int cnt = commentService.countCommentsFromOthers(postId, postWriterId, postWriterId);
+    assertThat(cnt, is(1));
+
+  }
+
+  @Test
+  @Order(4)
   void 코멘트를_수정한다() {
 
     Comment comment = commentService.findById(postId, postWriterId, userId, commentId).orElse(null);
@@ -93,7 +101,7 @@ class CommentServiceTest {
   }
 
   @Test
-  @Order(4)
+  @Order(5)
   void 코멘트를_삭제한다() {
     commentService.remove(postId, postWriterId, userId, commentId);
     Comment comment = commentService.findById(postId, postWriterId, userId, commentId).orElse(null);

@@ -8,8 +8,8 @@ import me.myungjin.social.controller.event.listener.ConnectionGrantEventListener
 import me.myungjin.social.controller.event.listener.ConnectionRequestEventListener;
 import me.myungjin.social.controller.event.listener.JoinEventListener;
 import me.myungjin.social.service.notification.NotificationService;
+import me.myungjin.social.service.post.CommentService;
 import me.myungjin.social.service.post.PostService;
-import me.myungjin.social.service.user.ConnectionService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -76,8 +76,8 @@ public class EventConfigure {
 
   @Bean(destroyMethod = "close")
   public CommentCreateEventListener commentCreateEventListener(
-          EventBus eventBus, NotificationService notificationService, PostService postService) {
-    return new CommentCreateEventListener(eventBus, notificationService, postService);
+          EventBus eventBus, NotificationService notificationService, PostService postService, CommentService commentService) {
+    return new CommentCreateEventListener(eventBus, notificationService, postService, commentService);
   }
 
   @Bean(destroyMethod = "close")

@@ -21,4 +21,6 @@ public interface CommentRepository {
 
     List<Comment> findAll(Id<Post, Long> postId);
 
+    int countCommentsFromOthers(Id<Post, Long> postId, Id<User, Long> postWriterId);
+
 }

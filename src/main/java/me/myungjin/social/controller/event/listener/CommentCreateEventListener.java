@@ -11,6 +11,7 @@ import me.myungjin.social.model.notification.PushMessage;
 import me.myungjin.social.model.post.Post;
 import me.myungjin.social.model.user.User;
 import me.myungjin.social.service.notification.NotificationService;
+import me.myungjin.social.service.post.CommentService;
 import me.myungjin.social.service.post.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +26,14 @@ public class CommentCreateEventListener implements AutoCloseable {
 
     private final PostService postService;
 
-    public CommentCreateEventListener(EventBus eventBus, NotificationService notificationService, PostService postService) {
+    private final CommentService commentService;
+
+    public CommentCreateEventListener(EventBus eventBus, NotificationService notificationService, PostService postService, CommentService commentService) {
         this.eventBus = eventBus;
         this.notificationService = notificationService;
         eventBus.register(this);
         this.postService = postService;
+        this.commentService = commentService;
     }
 
     @Subscribe
@@ -38,12 +42,15 @@ public class CommentCreateEventListener implements AutoCloseable {
         Id<User, Long> postWriterId = event.getPostWriterId();
         Id<User, Long> commentWriterId = event.getCommentWriterId();
         Post post = postService.findById(postId, postWriterId, commentWriterId).orElseThrow(() -> new NotFoundException(Post.class, event));
+        int commentCnt = commentService.countCommentsFromOthers(postId, postWriterId, postWriterId);
         log.info("{} writed a new comment on post {} !", commentWriterId, postId);
 
         try {
             log.info("Try to send push for {}", event);
             PushMessage pushMessage = new PushMessage(
-                    "[" + post.getContents() +"] commented!",
+                    "[" + post.getContents() +"] got (" + commentCnt + ") comments!",
+
+                    //"[" + post.getContents() +"] got new comment!",
                     "user/" + postWriterId.value() + "/post/" + postId.value() + "/comment",
                     "Please check new comment"
             );
