@@ -63,7 +63,7 @@ public class JdbcNotiRepository implements NotiRepository {
     @Override
     public List<Noti> findAll(Id<User, Long> userId) {
         return jdbcTemplate.query(
-                "SELECT n.* FROM notifications n JOIN users u ON n.user_seq=u.seq AND n.user_seq = ?",
+                "SELECT n.* FROM notifications n JOIN users u ON n.user_seq=u.seq AND n.user_seq = ? ORDER BY n.seq DESC",
                 new Object[]{userId.value()},
                 mapper
         );
