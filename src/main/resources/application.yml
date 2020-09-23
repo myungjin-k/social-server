@@ -25,7 +25,7 @@ jwt:
   token:
     header: api_key
     issuer: social
-    clientSecret: bXl1bmdqaW4=
+    clientSecret: CLIENT_SECRET
     expirySeconds: 6000
 cloud:
   aws:
@@ -35,3 +35,12 @@ cloud:
       secretKey: SECRET_KEY
       url: https://s3.ap-northeast-2.amazonaws.com
       bucketName: myungjin-social
+
+eventbus:
+  asyncPoolCore: 1
+  asyncPoolMax: 4
+  asyncPoolQueue: 100
+
+webpush:
+  publicKey: PUBLIC_KEY
+  privateKey: PRIVATE_KEY
